@@ -1,0 +1,51 @@
+DrawPlaneAndGrid <- function(n_row, n_col)
+{
+	# Draw floor plane.
+	square <- c( 
+	 -1.0, -1.0, 0, 1.0,
+	  1.0, -1.0, 0, 1.0,
+	  1.0,  1.0, 0, 1.0,
+	 -1.0,  1.0, 0, 1.0
+	)
+
+	indices <- c( 1, 2, 3, 4 )
+	shade3d( qmesh3d(square,indices), alpha=0.5, col="blue")
+
+	# Draw floor lines (row).
+	for (i in 1:n_row) 
+	{
+		x_line_pos = i / n_row * 2 - 1
+		lines3d(seq(-1, 1), seq(x_line_pos, x_line_pos), seq(0, 0, by=1), col="black", lwd=1)
+	}
+
+	# Draw floor lines (col).
+	for (i in 1:n_col) 
+	{
+		y_line_pos = i / n_col * 2 - 1
+		lines3d(seq(y_line_pos, y_line_pos), seq(-1, 1), seq(0, 0, by=1), col="black", lwd=1)
+	}
+}
+
+CreateMergeMatrix <- function(n_row, n_col, data)
+{
+	merge_n_row = ((n_row -1) + (n_col -1))
+
+	merge_matrix = matrix(data,
+	   					  nrow = merge_n_row,
+	   					  ncol=2,
+	   					  byrow = TRUE) # fill matrix by rows 
+
+	return(merge_matrix)
+}
+
+MiddleSquarePoint <- function(row, col, n_row, n_col)
+{
+	x = -1.0 + 1.0 / n_col * (2 * row - 1.0)
+	y = 1.0 - 1.0 / n_row * (2 * col - 1.0)
+	v = c(x, y)
+
+	return (v)
+}
+
+
+
