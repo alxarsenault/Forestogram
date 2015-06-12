@@ -1,4 +1,0 @@
-Forestogram
-===========
-
-R Forestogram generation
