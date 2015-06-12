@@ -48,3 +48,8 @@ Cache.db
 dgph
 *.idx
 *.strings-sym
+
+
+# R
+.RData
+.Rhistory
