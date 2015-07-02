@@ -50,38 +50,38 @@ struct Line
 // 	Point center;
 // };
 
-// void AddLinesToMatrix(const int& merge_index,
-// 					  R::Matrix2D<double>& lines, 
-// 					  const Line& low, 
-// 					  const Line& high, 
-// 					  const Line& cross)
-// {
-// 	int index = merge_index - 1;
+ void AddLinesToMatrix(const int& merge_index,
+ 					  R::Matrix2D<double>& lines, 
+ 					  const Line& low, 
+ 					  const Line& high, 
+ 					  const Line& cross)
+ {
+ 	int index = merge_index - 1;
 
-// 	// Low line.
-// 	lines(index, 0) = low.pt1.x;
-// 	lines(index, 1) = low.pt1.y;
+ 	// Low line.
+ 	lines(index, 0) = low.pt1.x;
+ 	lines(index, 1) = low.pt1.y;
 
-// 	lines(index, 2) = low.pt2.x;
-// 	lines(index, 3) = low.pt2.y;
+ 	lines(index, 2) = low.pt2.x;
+ 	lines(index, 3) = low.pt2.y;
 
-// 	// High line.
-// 	lines(index, 4) = high.pt1.x;
-// 	lines(index, 5) = high.pt1.y;
+ 	// High line.
+ 	lines(index, 4) = high.pt1.x;
+ 	lines(index, 5) = high.pt1.y;
 
-// 	lines(index, 6) = high.pt2.x;
-// 	lines(index, 7) = high.pt2.y;
+ 	lines(index, 6) = high.pt2.x;
+ 	lines(index, 7) = high.pt2.y;
 
-// 	// Cross line.
-// 	lines(index, 8) = cross.pt1.x;
-// 	lines(index, 9) = cross.pt1.y;
+ 	// Cross line.
+ 	lines(index, 8) = cross.pt1.x;
+ 	lines(index, 9) = cross.pt1.y;
 	
-// 	lines(index, 10) = cross.pt2.x;
-// 	lines(index, 11) = cross.pt2.y;
-// }
+ 	lines(index, 10) = cross.pt2.x;
+ 	lines(index, 11) = cross.pt2.y;
+ }
 
-// extern "C"
-// {
+ extern "C"
+ {
 
 
 // 	void GenericDendrogram(int* n_merge, 
