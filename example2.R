@@ -230,7 +230,7 @@ Forestogramme(size, merge_matrix,
               cut_height = 48,
               draw_cut = TRUE, 
               draw_side_tree = TRUE, 
-              draw3D = TRUE,
+              draw3D = FALSE,
               draw2D_grid = TRUE,
               line_width = 4,
               line_width_2D = 1) 

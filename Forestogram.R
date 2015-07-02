@@ -134,6 +134,9 @@ Forestogramme <- function(size, merge_matrix,
 		view3d( theta = 0, phi = 0)
 	}
 
+
+	
+
 	#-----------------------------------------------------------------------------
 	# PROCESS INPUT.
 	#-----------------------------------------------------------------------------
@@ -166,6 +169,9 @@ Forestogramme <- function(size, merge_matrix,
 
 	red_color = c(1.0, 0.0, 0.0)
 	yellow_color = c(248.0 / 255.0, 239.0/255.0, 0.0)
+
+	# red_color = c(0.0, 1.0, 0.0)
+	# yellow_color = c(0.0, 0.0, 1.0)
 
 	#-----------------------------------------------------------------------------
 	# DRAW BOTTOM PLAIN AND GRID.
@@ -338,7 +344,7 @@ Forestogramme <- function(size, merge_matrix,
 					segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
 				}
 
-				if(draw3D == TRUE)
+				#if(draw3D == TRUE)
 				{
 					for(n in row_names)
 					{
@@ -364,3 +370,7 @@ Forestogramme <- function(size, merge_matrix,
 
 
 }
+
+
+
+

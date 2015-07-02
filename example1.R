@@ -1,6 +1,6 @@
 # Simple example of Forestogram drawing.
 source('Forestogram.R')
-
+library(rgl)
 
 # Matrix size (row, col).
 size = c(3, 4)
@@ -38,8 +38,10 @@ Forestogramme(size,
 			  draw_side_tree = TRUE, 
 			  draw3D = TRUE,
 			  draw2D_grid = TRUE,
-			  line_width = 4,
+			  line_width = 3,
 			  line_width_2D = 1, 
 			  base_contour_width = 1,
 			  cut_base_contour_width = 1)
+
+# width, length, height ratios from first view position.
 			

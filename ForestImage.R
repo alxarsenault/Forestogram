@@ -1,4 +1,4 @@
-library(png)
+# library(png)
 
 SavePlotImage <- function(file_name)
 {
@@ -6,7 +6,7 @@ SavePlotImage <- function(file_name)
 	# Replace the directory and file information with your info
 	# ima <- readPNG(file_name)
 
-	#Set up the plot area
+	# # Set up the plot area
 	# plot(1:2, type='n', main="Forestogramme", axes=FALSE)
 
 	# #Get the plot information so the image will fill the plot box, and draw it
