@@ -213,7 +213,8 @@ DrawRowDendrogram <-function(size, merge_info, size_ratio, order, margin, cut_he
 	lines = ProcessRowDendrogram(n_row_merge, 
 								 merge_info$row_merge, 
 								 merge_info$row_hight, 
-								 order);
+								 order,
+								 cut_height);
 
 	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * (1.0 - (size_ratio[2] + margin[2]));
 	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] + size_ratio[2] + margin[2];
@@ -222,45 +223,55 @@ DrawRowDendrogram <-function(size, merge_info, size_ratio, order, margin, cut_he
 
 	for(l in 1:n_row_merge)
 	{
-		segments(lines[l, 1], lines[l, 2], lines[l, 3], lines[l, 4]);
-		segments(lines[l, 5], lines[l, 6], lines[l, 7], lines[l, 8]);
-		segments(lines[l, 9], lines[l, 10], lines[l, 11], lines[l, 12]);
+		line_color = rgb(lines[l, 13], lines[l, 14], lines[l, 15]);
+		segments(lines[l, 1], lines[l, 2], lines[l, 3], lines[l, 4], col=line_color);
+		segments(lines[l, 5], lines[l, 6], lines[l, 7], lines[l, 8], col=line_color);
+		segments(lines[l, 9], lines[l, 10], lines[l, 11], lines[l, 12], col=line_color);
 	}
+
+	# Draw cut line.
+	norm_cut_height = cut_height / merge_info$row_hight[size[1] - 1];
+	# y_bottom = margin[1];
+	# y_top = margin[1] + size_ratio[1];
+	y_bottom = margin[1];
+	y_top = margin[1] + size_ratio[1];
+	x_pos = norm_cut_height * (1.0 - (size_ratio[2] + margin[2])) + size_ratio[2] + margin[2];
+	#x_pos = norm_cut_height * (1.0 - (size_ratio[2] + margin[2]));
+	#x_pos = x_pos + size_ratio[2] + margin[2];
+
+	# print(x_pos)
+
+	segments(x_pos, y_bottom, x_pos, y_top, col=rgb(0.5, 0.5, 0.5), lty=3);
 }
 
 DrawColDendrogram <-function(size, merge_info, size_ratio, order, margin, cut_height)
 {
 	n_col_merge = size[2] - 1;
-	lines = ProcessColDendrogram(n_col_merge, merge_info$col_merge, merge_info$col_hight, order);
+	lines = ProcessColDendrogram(n_col_merge, merge_info$col_merge, merge_info$col_hight, order, cut_height);
 
 	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * size_ratio[2] + margin[2];
 
 	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] * (1.0 - (size_ratio[1] + margin[1]));
 	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] + size_ratio[1] + margin[1];
 
-	norm_cut_height = cut_height / merge_info$col_hight[size[2] - 1];
+	
 
 	for(l in 1:n_col_merge)
 	{
-		line_color = "#FF0000";
-
-		if(merge_info$col_hight[l] >= cut_height)
-		{
-			line_color = "#000000";
-		}
-
+		line_color = rgb(lines[l, 13], lines[l, 14], lines[l, 15]);
 		segments(lines[l, 1], lines[l, 2], lines[l, 3], lines[l, 4], col=line_color);
 		segments(lines[l, 5], lines[l, 6], lines[l, 7], lines[l, 8], col=line_color);
 		segments(lines[l, 9], lines[l, 10], lines[l, 11], lines[l, 12], col=line_color);
 	}
 
-
+	# Draw cut line.
+	norm_cut_height = cut_height / merge_info$col_hight[size[2] - 1];
 	x_left = margin[2];
 	x_right = margin[2] + size_ratio[2];
 	y_pos = norm_cut_height * (1.0 - (size_ratio[1] + margin[1]));
 	y_pos = y_pos + size_ratio[1] + margin[1];
 
-	segments(x_left, y_pos, x_right, y_pos, col="#00FF00");
+	segments(x_left, y_pos, x_right, y_pos, col=rgb(0.5, 0.5, 0.5), lty=3);
 }
 
 DrawRowNames <- function(size, size_ratio, names, margin)
@@ -292,14 +303,14 @@ DrawColNames <- function(size, size_ratio, names, margin)
 	}
 }
 
-Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 5.0)
+Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
 {
 	plot.new()
 	frame()
 
 	# cut_index = 20;
 
-	margin = c(0.04, 0.04);
+	margin = c(0.07, 0.04);
 
 	size = dim(data);
 
@@ -333,6 +344,6 @@ data(gaelle)
 
 Dendrogram2D.plot(gaelle, size_ratio = c(0.7, 0.7));
 
-print(colnames(gaelle))
+# print(colnames(gaelle))
 # Dendrogram2D.plot(data);
 

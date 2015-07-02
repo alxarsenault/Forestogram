@@ -13,7 +13,7 @@
 # double* merge, 
 # double* height, 
 # double* line_points
-ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order)
+ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order, cut_hight)
 {
 	dyn.load("lib/SimpleExample.so");
 
@@ -33,20 +33,21 @@ ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order)
 		ncol = length(data)
 	}
 
-	answer = vector(mode="numeric", length = n_merge * 12);
-	ans_matrix = matrix(answer,  nrow = n_merge,  ncol = 12, byrow = TRUE)
+	answer = vector(mode="numeric", length = n_merge * 16);
+	ans_matrix = matrix(answer,  nrow = n_merge,  ncol = 16, byrow = TRUE)
 
 	out <- .C("ProcessRightSideDendrogram", 
 			  n_merge = as.integer(n_merge), 
 			  merge = merge_matrix, 
 			  height = height_vector,
 			  order = order,
+			  cut_hight = cut_hight,
 			  line_points = ans_matrix);
 
 
 	return(matrix(out$line_points, 
 				  nrow = n_merge,
-	   			  ncol = 12,
+	   			  ncol = 16,
 	   			  byrow = FALSE));
 
 	# return(out$answer);
@@ -58,7 +59,7 @@ ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order)
 
 
 
-ProcessColDendrogram <- function(n_merge, merge_matrix, height_vector, order)
+ProcessColDendrogram <- function(n_merge, merge_matrix, height_vector, order, cut_hight)
 {
 	dyn.load("lib/SimpleExample.so");
 
@@ -78,20 +79,21 @@ ProcessColDendrogram <- function(n_merge, merge_matrix, height_vector, order)
 		ncol = length(data)
 	}
 
-	answer = vector(mode="numeric", length = n_merge * 12);
-	ans_matrix = matrix(answer,  nrow = n_merge,  ncol = 12, byrow = TRUE)
+	answer = vector(mode="numeric", length = n_merge * 16);
+	ans_matrix = matrix(answer,  nrow = n_merge,  ncol = 16, byrow = TRUE)
 
 	out <- .C("ProcessColDendrogram", 
 			  n_merge = as.integer(n_merge), 
 			  merge = merge_matrix, 
 			  height = height_vector,
 			  order = order,
+			  cut_hight = cut_hight,
 			  line_points = ans_matrix);
 
 
 	return(matrix(out$line_points, 
 				  nrow = n_merge,
-	   			  ncol = 12,
+	   			  ncol = 16,
 	   			  byrow = FALSE));
 
 	# return(out$answer);
