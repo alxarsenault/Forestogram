@@ -106,24 +106,53 @@ BiClust <- function(data)
 	return(newList);
 }
 
-DrawBottomRect <- function(size, size_ratio)
+# DrawBottomRect <- function(size, size_ratio, margin)
+# {
+# 	col_pallet = heat.colors(10, alpha = 1);
+
+# 	for(j in seq(0, size[1] - 1))
+# 	{
+# 		y_pos_bottom = margin[1] + (j / size[1]) * size_ratio[1];
+# 		y_pos_top = margin[1] + ((j+1) / size[1]) * size_ratio[1];
+
+# 		for(i in seq(0, size[2] - 1))
+# 		{
+# 			x_pos_left = margin[2] + (i / size[2]) * size_ratio[2];
+# 			x_pos_right = margin[2] + ((i+1) / size[2]) * size_ratio[2];
+
+# 			rect(x_pos_left, y_pos_bottom, x_pos_right, y_pos_top, col=col_pallet[i + 1], border="lightgray");
+# 		}	
+# 	}
+# }
+
+DrawBottomRect <- function(size, size_ratio, margin)
 {
-	col_pallet = heat.colors(10, alpha = 1);
+	x_left = margin[2];
+	x_right = margin[2] + size_ratio[2];
 
-	for(j in seq(0, size[1] - 1))
+	y_bottom = margin[1];
+	y_top = margin[1] + size_ratio[1];
+
+	
+	# Row.
+	for( k in seq(1, size[1] - 1) )
 	{
-		y_pos_bottom = (j / size[1]) * size_ratio[1];
-		y_pos_top = ((j+1) / size[1]) * size_ratio[1];
-
-		for(i in seq(0, size[2] - 1))
-		{
-			x_pos_left = (i / size[2]) * size_ratio[2];
-			x_pos_right = ((i+1) / size[2]) * size_ratio[2];
-
-			rect(x_pos_left, y_pos_bottom, x_pos_right, y_pos_top, col=col_pallet[i + 1])
-		}	
+		y_pos = margin[1] + (k / size[1]) * size_ratio[1];
+		segments(x_left, y_pos, x_right, y_pos, col="lightgray", lty=3);	
 	}
+
+	# Col.
+	for( k in seq(1, size[2] - 1) )
+	{
+		x_pos = margin[2] + (k / size[2]) * size_ratio[2];
+		segments(x_pos, y_bottom, x_pos, y_top, col="lightgray", lty=3);	
+	}
+
+	# Draw contour.
+	rect(x_left, y_bottom, x_right, y_top, col=NA, border="black");
 }
+
+
 
 MergeMatrix <- function(size, data)
 {
@@ -178,7 +207,7 @@ SplitVectors <-function(size, merge_matrix, height_vector, rowcol_vector)
 				col_hight = col_hight));
 }
 
-DrawRowDendrogram <-function(size, merge_info, size_ratio, order)
+DrawRowDendrogram <-function(size, merge_info, size_ratio, order, margin, cut_height)
 {
 	n_row_merge = size[1] - 1;
 	lines = ProcessRowDendrogram(n_row_merge, 
@@ -186,9 +215,10 @@ DrawRowDendrogram <-function(size, merge_info, size_ratio, order)
 								 merge_info$row_hight, 
 								 order);
 
-	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * (1.0 - size_ratio[2]);
-	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] + size_ratio[2];
-	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] * size_ratio[1];
+	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * (1.0 - (size_ratio[2] + margin[2]));
+	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] + size_ratio[2] + margin[2];
+
+	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] * size_ratio[1] + margin[1];
 
 	for(l in 1:n_row_merge)
 	{
@@ -198,34 +228,85 @@ DrawRowDendrogram <-function(size, merge_info, size_ratio, order)
 	}
 }
 
-DrawColDendrogram <-function(size, merge_info, size_ratio, order)
+DrawColDendrogram <-function(size, merge_info, size_ratio, order, margin, cut_height)
 {
 	n_col_merge = size[2] - 1;
 	lines = ProcessColDendrogram(n_col_merge, merge_info$col_merge, merge_info$col_hight, order);
 
-	# RIGHT SIDE DENDROGRAM.
-	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * size_ratio[2];
-	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] * (1.0 - size_ratio[1]);
-	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] + size_ratio[1];
+	lines[, c(1, 3, 5, 7, 9, 11)] = lines[, c(1, 3, 5, 7, 9, 11)] * size_ratio[2] + margin[2];
 
+	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] * (1.0 - (size_ratio[1] + margin[1]));
+	lines[, c(2, 4, 6, 8, 10, 12)] = lines[, c(2, 4, 6, 8, 10, 12)] + size_ratio[1] + margin[1];
+
+	norm_cut_height = cut_height / merge_info$col_hight[size[2] - 1];
 
 	for(l in 1:n_col_merge)
 	{
-		segments(lines[l, 1], lines[l, 2], lines[l, 3], lines[l, 4]);
-		segments(lines[l, 5], lines[l, 6], lines[l, 7], lines[l, 8]);
-		segments(lines[l, 9], lines[l, 10], lines[l, 11], lines[l, 12]);
+		line_color = "#FF0000";
+
+		if(merge_info$col_hight[l] >= cut_height)
+		{
+			line_color = "#000000";
+		}
+
+		segments(lines[l, 1], lines[l, 2], lines[l, 3], lines[l, 4], col=line_color);
+		segments(lines[l, 5], lines[l, 6], lines[l, 7], lines[l, 8], col=line_color);
+		segments(lines[l, 9], lines[l, 10], lines[l, 11], lines[l, 12], col=line_color);
+	}
+
+
+	x_left = margin[2];
+	x_right = margin[2] + size_ratio[2];
+	y_pos = norm_cut_height * (1.0 - (size_ratio[1] + margin[1]));
+	y_pos = y_pos + size_ratio[1] + margin[1];
+
+	segments(x_left, y_pos, x_right, y_pos, col="#00FF00");
+}
+
+DrawRowNames <- function(size, size_ratio, names, margin)
+{
+	# y_pos = 0.0;
+	x_pos = 0.0;
+	y_ratio = (1.0 / size[1]) * size_ratio[1];
+	half_size = y_ratio * 0.5;
+
+	for(i in seq(1, size[1]))
+	{
+		y_pos = (i - 1) * y_ratio + half_size + margin[1];
+
+		text(x_pos, y_pos, labels=names[i], cex=0.5);
 	}
 }
 
+DrawColNames <- function(size, size_ratio, names, margin)
+{
+	y_pos = 0.0;
+	x_ratio = (1.0 / size[2]) * size_ratio[2];
+	half_size = x_ratio * 0.5;
 
-Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5))
+	for(i in seq(1, size[2]))
+	{
+		x_pos = (i - 1) * x_ratio + half_size + margin[2];
+
+		text(x_pos, y_pos, labels=names[i], cex=0.5, srt=90);
+	}
+}
+
+Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 5.0)
 {
 	plot.new()
 	frame()
 
+	# cut_index = 20;
+
+	margin = c(0.04, 0.04);
+
 	size = dim(data);
 
-	DrawBottomRect(size, size_ratio);
+	DrawBottomRect(size, size_ratio, margin);
+
+	DrawRowNames(size, size_ratio, rownames(data), margin);
+	DrawColNames(size, size_ratio, colnames(data), margin);
 
 	clust_info <- BiClust(data);
 
@@ -234,21 +315,24 @@ Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5))
 							  clust_info$height, 
 							  clust_info$row_col);
 
-	DrawRowDendrogram(size, merge_info, size_ratio, clust_info$row_order);
-	DrawColDendrogram(size, merge_info, size_ratio, clust_info$col_order);
+	DrawRowDendrogram(size, merge_info, size_ratio, clust_info$row_order, margin, cut_height);
+	DrawColDendrogram(size, merge_info, size_ratio, clust_info$col_order, margin, cut_height);
+
 }
 
 # # Random values (r_row * n_col).
-data = matrix(c(-1, -2, -3, -2, 
-				-5, -6, -7, -8, 
-				-9, -1, -12, -2), 
-			  nrow = size[1], 
-			  ncol = size[2], 
-			  byrow = TRUE);
+# data = matrix(c(-1, -2, -3, -2, 
+# 				-5, -6, -7, -8, 
+# 				-9, -1, -12, -2), 
+# 			  nrow = size[1], 
+# 			  ncol = size[2], 
+# 			  byrow = TRUE);
 
 library(bclust)
 data(gaelle)
 
-Dendrogram2D.plot(gaelle);
+Dendrogram2D.plot(gaelle, size_ratio = c(0.7, 0.7));
+
+print(colnames(gaelle))
 # Dendrogram2D.plot(data);
 
