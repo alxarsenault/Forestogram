@@ -197,6 +197,29 @@ inline Point indexToPoint(int* size,
 	return Point(x, y);
 }
 
+std::vector<Color> GetHeatColors(const int& n)
+{
+	std::vector<Color> colors;
+	double incr = 1.0 / double(n);
+	double v = 0.0;
+
+	double r = 1.0;
+	double g = 0.0;
+	double b = 0.0;
+
+	for(int i = 0; i < n; i++)
+	{
+		g = v;
+		v += incr;
+
+		if(v > 1.0) v = 1.0;
+		if(g > 1.0) g = 1.0;
+		
+		colors.emplace_back(Color(r, g, b, 1.0));
+	}
+
+	return colors;
+}
 
 std::vector<Color> GetRainbowColors(const int& n)
 {
@@ -707,6 +730,7 @@ std::vector<Color> GetRainbowColors(const int& n)
 		int clust_incr = 0;
 
 		std::vector<Color> colors = GetRainbowColors(n_cluster);
+		// std::vector<Color> colors = GetHeatColors(n_cluster);
 
 		for(int j = 0; j < row_index.size() - 1; j++)
 		{
