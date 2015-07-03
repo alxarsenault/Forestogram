@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "RUtils.h"
+#include "RMatrix.h"
 
 #include <map>
 #include <utility>
@@ -732,9 +733,12 @@ std::vector<Color> GetRainbowColors(const int& n)
 		std::vector<Color> colors = GetRainbowColors(n_cluster);
 		// std::vector<Color> colors = GetHeatColors(n_cluster);
 
-		for(int j = 0; j < row_index.size() - 1; j++)
+        
+//		for(int j = 0; j < row_index.size() - 1; j++)
+        for(int i = 0; i < col_index.size() - 1; i++)
 		{
-			for(int i = 0; i < col_index.size() - 1; i++)
+//			for(int i = 0; i < col_index.size() - 1; i++)
+            for(int j = 0; j < row_index.size() - 1; j++)
 			{
 				Color c = colors[clust_incr];
 

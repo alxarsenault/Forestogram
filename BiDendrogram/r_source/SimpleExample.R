@@ -15,7 +15,7 @@
 # double* line_points
 ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order, cut_hight)
 {
-	dyn.load("lib/SimpleExample.so");
+	dyn.load("lib/BiDendrogram.so");
 
 	matrix_dim = 0
 	nrow = 0
@@ -68,7 +68,7 @@ ProcessRowDendrogram <- function(n_merge, merge_matrix, height_vector, order, cu
 
 ProcessColDendrogram <- function(n_merge, merge_matrix, height_vector, order, cut_hight)
 {
-	dyn.load("lib/SimpleExample.so");
+	dyn.load("lib/BiDendrogram.so");
 
 	matrix_dim = 0
 	nrow = 0
@@ -123,7 +123,7 @@ ProcessColDendrogram <- function(n_merge, merge_matrix, height_vector, order, cu
 # void ProcessClusterOnRect(int* size, double* size_ratio, double* margin)
 ProcessClusterOnRect <- function(size, size_ratio, margin, row_limits, col_limits)
 {
-	dyn.load("lib/SimpleExample.so");
+	dyn.load("lib/BiDendrogram.so");
 
 	n_clust = sum(row_limits) * sum(col_limits);
 
