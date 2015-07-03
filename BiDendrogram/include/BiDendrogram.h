@@ -53,7 +53,22 @@ protected:
                                          const R::Point& low,
                                          const R::Point& high) = 0;
     
-
+private:
+    void AddLinesToMatrix(const int& merge_index,
+                          const std::vector<R::Line>& lines,
+                          const R::Color& color);
+    
+    void AssignColorToMergedClusters();
+    void ActivateMergedClustersLimit();
+    
+    void MergeTwoClusters(const int& merge_index,
+                          const int& index1,
+                          const int& index2,
+                          const double& height,
+                          const R::Point& low,
+                          const R::Point& high);
+    
+protected:
     R::Matrix2D<double> _merge, _line_points;
     R::Vector<int> _order;
     R::Vector<double> _height, _answer_limits;
@@ -61,16 +76,6 @@ protected:
     std::vector<double> _normHeight;
     std::map<int, Cluster> _clusters;
     int _size;
-    
-    
-    void AddLinesToMatrix(const int& merge_index,
-                          R::Matrix2D<double>& lines,
-                          const R::Line& low,
-                          const R::Line& high,
-                          const R::Line& cross,
-                          const R::Color& color);
-    
-    
 };
 
 class ColumnDendrogram : public Dendrogram

@@ -1,4 +1,4 @@
-LIB_NAME = SimpleExample
+LIB_NAME = BiDendrogram
 
 ## Platform name.
 UNAME := $(shell uname)

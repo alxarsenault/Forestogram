@@ -39,7 +39,6 @@ void Dendrogram::init()
     {
         int index = -_order[i];
         
-//        _clusters[index].point = R::Point((i / double(_size)) + half_pos, 0.0);
         double pos_delta = i / double(_size) + half_pos;
         _clusters[index].point = GetInitalClusterPosition(pos_delta);
         
@@ -60,46 +59,25 @@ void Dendrogram::process(const double& cut_hight)
     
     for(int i = 0; i < _merge.size().row; i++)
     {
+        // Merging clusters index.
         int index1 = _merge(i, 0);
         int index2 = _merge(i, 1);
         
-        // Find highest center.
+        // Find highest cluster center.
         R::Point low(_clusters[index1].point);
         R::Point high(_clusters[index2].point);
         
-        //------------------------------------------------------------------------
-//        if(low.y > high.y)
         if(!IsLowestPoint(low, high))
-        //------------------------------------------------------------------------
         {
             std::swap(low, high);
         }
-        
-        
-        
-        
-        
-        //------------------------------------------------------------------------
-//        double y_final = _normHeight[i];
-//        
-//        R::Line low_line(low, R::Point(low.x, y_final));
-//        R::Line high_line(high, R::Point(high.x, y_final));
-//        R::Line cross_line(low_line.pt2, high_line.pt2);
-        
+
+        // Get merged clusters drawing lines position.
         std::vector<R::Line> lines = GetMergeLines(_normHeight[i], low, high);
-        //std::vector<R::Line> GetMergeLines(const double& height, const R::Point& low, const R::Point& high);
-        //------------------------------------------------------------------------
-        
-        
-        
-        
-        R::Color color(0.0, 0.0, 0.0, 1.0);
-        
-//        if(high_line.pt2.y > norm_cut_hight)
+
+        // Determine if new cluster is above cutting height.
         if(IsPointAboveHeight(norm_cut_hight, lines[2].pt2))
         {
-            color = R::Color(0.0, 0.0, 0.0, 1.0);
-            
             if(as_reach_cutting_hight == false)
             {
                 is_first_time_cut = true;
@@ -111,124 +89,127 @@ void Dendrogram::process(const double& cut_hight)
             }
         }
         
+        // Add merging cluster lines points to matrix.
+        AddLinesToMatrix(merge_index, lines, R::Color(0.0, 0.0, 0.0, 1.0));
         
-        
-        AddLinesToMatrix(merge_index, _line_points,
-                         lines[0], lines[1], lines[2], color);
-        
-        
-        
-        
-        
-        
-        // Change all cluster color.
+        // Change all cluster color and add limits to each cluster.
         if(is_first_time_cut)
         {
-            std::size_t n_cluster = _clusters.size();
-            
-            R::ColorVector colors = R::GetRainbowColors(n_cluster);
-            
-            int i = 0;
-            for(auto& clust : _clusters)
-            {
-                R::Color c = colors[i++];
-                
-                for(auto& i : clust.second.index_list)
-                {
-                    _line_points(i, 12) = c.r;
-                    _line_points(i, 13) = c.g;
-                    _line_points(i, 14) = c.b;
-                    _line_points(i, 15) = 1.0;
-                }
-                
-                // Set limits.
-                for(int i = 0; i < _size; i++)
-                {
-                    if(i == clust.second.small_limit)
-                    {
-                        _answer_limits[i] = 1.0;
-                    }
-                }
-            }
+            AssignColorToMergedClusters();
+            ActivateMergedClustersLimit();
         }
         
-        
-        
-        //------------------------------------------------------------------------
-        // Add new cluster.
-//        _clusters[merge_index].point = R::Point((low.x + high.x) * 0.5, y_final);
-        
-        _clusters[merge_index].point = GetNewClusterCenter(_normHeight[i], low, high);
-        //R::Point GetNewClusterCenter(const double& height, const R::Point& low, const R::Point& high);
-        
-        _clusters[merge_index].color = color;
-        _clusters[merge_index].n_merge = _clusters[index1].n_merge + _clusters[index2].n_merge + 1;
-        
-        std::vector<int> index_list1 = _clusters[index1].index_list;
-        std::vector<int> index_list2 = _clusters[index2].index_list;
-        index_list1.insert(index_list1.end(), index_list2.begin(), index_list2.end());
-        
-        _clusters[merge_index].index_list = index_list1;
-        _clusters[merge_index].index_list.push_back(merge_index - 1);
-        
-        _clusters[merge_index].small_limit = std::min(_clusters[index1].small_limit, _clusters[index2].small_limit);
-        _clusters[merge_index].big_limit = std::max(_clusters[index1].big_limit, _clusters[index2].big_limit);
-        //------------------------------------------------------------------------
-        
-        // if(as_reach_cutting_hight)
-        // {
-        // 	// as_reach_cutting_hight = false;
-        // }
-        
-        // Remove old cluster.
-        _clusters.erase(index1);
-        _clusters.erase(index2);
-        
+        // Merge both cluster in the cluster map.
+        MergeTwoClusters(merge_index, index1, index2, _normHeight[i], low, high);
         merge_index++;
     }
 }
 
 
-
-
-
-
-
 void Dendrogram::AddLinesToMatrix(const int& merge_index,
-                                  R::Matrix2D<double>& lines,
-                                  const R::Line& low,
-                                  const R::Line& high,
-                                  const R::Line& cross,
+                                  const std::vector<R::Line>& lines,
                                   const R::Color& color)
 {
     int index = merge_index - 1;
     
     // Low line.
-    lines(index, 0) = low.pt1.x;
-    lines(index, 1) = low.pt1.y;
+    _line_points(index, 0) = lines[0].pt1.x;
+    _line_points(index, 1) = lines[0].pt1.y;
     
-    lines(index, 2) = low.pt2.x;
-    lines(index, 3) = low.pt2.y;
+    _line_points(index, 2) = lines[0].pt2.x;
+    _line_points(index, 3) = lines[0].pt2.y;
     
     // High line.
-    lines(index, 4) = high.pt1.x;
-    lines(index, 5) = high.pt1.y;
+    _line_points(index, 4) = lines[1].pt1.x;
+    _line_points(index, 5) = lines[1].pt1.y;
     
-    lines(index, 6) = high.pt2.x;
-    lines(index, 7) = high.pt2.y;
+    _line_points(index, 6) = lines[1].pt2.x;
+    _line_points(index, 7) = lines[1].pt2.y;
     
     // Cross line.
-    lines(index, 8) = cross.pt1.x;
-    lines(index, 9) = cross.pt1.y;
+    _line_points(index, 8) = lines[2].pt1.x;
+    _line_points(index, 9) = lines[2].pt1.y;
     
-    lines(index, 10) = cross.pt2.x;
-    lines(index, 11) = cross.pt2.y;
+    _line_points(index, 10) = lines[2].pt2.x;
+    _line_points(index, 11) = lines[2].pt2.y;
     
-    lines(index, 12) = color.r;
-    lines(index, 13) = color.g;
-    lines(index, 14) = color.b;
-    lines(index, 15) = 1.0;//color.a;
+    
+    // Color.
+    _line_points(index, 12) = color.r;
+    _line_points(index, 13) = color.g;
+    _line_points(index, 14) = color.b;
+    _line_points(index, 15) = 1.0;//color.a;
 }
+
+void Dendrogram::AssignColorToMergedClusters()
+{
+    R::ColorVector colors = R::GetRainbowColors(_clusters.size());
+    
+    int i = 0;
+    for(auto& clust : _clusters)
+    {
+        R::Color c = colors[i++];
+        
+        for(auto& k : clust.second.index_list)
+        {
+            _line_points(k, 12) = c.r;
+            _line_points(k, 13) = c.g;
+            _line_points(k, 14) = c.b;
+            _line_points(k, 15) = 1.0;
+        }
+    }
+}
+
+void Dendrogram::ActivateMergedClustersLimit()
+{
+    for(auto& clust : _clusters)
+    {
+        // Set limits.
+        for(int i = 0; i < _size; i++)
+        {
+            if(i == clust.second.small_limit)
+            {
+                _answer_limits[i] = 1.0;
+            }
+        }
+    }
+}
+
+void Dendrogram::MergeTwoClusters(const int& merge_index,
+                                  const int& index1,
+                                  const int& index2,
+                                  const double& height,
+                                  const R::Point& low,
+                                  const R::Point& high)
+{
+    Cluster& clust1(_clusters[index1]);
+    Cluster& clust2(_clusters[index2]);
+    
+    // New cluster created.
+    Cluster& m_clust(_clusters[merge_index]);
+    
+    // Update new cluster info.
+    m_clust.point = GetNewClusterCenter(height, low, high);
+    m_clust.color = R::Color(0.0, 0.0, 0.0, 1.0);
+    m_clust.n_merge = clust1.n_merge + clust2.n_merge + 1;
+    
+    // Merge both cluster index list.
+    std::vector<int> index_list1 = clust1.index_list;
+    std::vector<int> index_list2 = clust2.index_list;
+    index_list1.insert(index_list1.end(), index_list2.begin(), index_list2.end());
+    
+    m_clust.index_list = index_list1;
+    m_clust.index_list.push_back(merge_index - 1);
+    
+    // Find new limits.
+    m_clust.small_limit = std::min(clust1.small_limit, clust2.small_limit);
+    m_clust.big_limit = std::max(clust1.big_limit, clust2.big_limit);
+
+    // Remove old cluster.
+    _clusters.erase(index1);
+    _clusters.erase(index2);
+}
+
 
 
 
