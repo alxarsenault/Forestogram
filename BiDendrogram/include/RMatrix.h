@@ -36,11 +36,64 @@ namespace R
 		{
 			return _data;
 		}
+        
+        Size2D size() const
+        {
+            return _size;
+        }
 
 	private:
 		T* _data;
 		Size2D _size;
 	};
+    
+    template <typename T>
+    class Vector
+    {
+    public:
+        Vector(T* data, const int& size):
+        _data(data),
+        _size(size)
+        {
+            
+        }
+        
+        Vector(const Vector& vec):
+        _data(vec._data),
+        _size(vec._size)
+        {
+            
+        }
+        
+        int size() const
+        {
+            return _size;
+        }
+        
+        inline T& operator [] (const unsigned int& index)
+        {
+            return _data[index];
+        }
+        
+        T* data()
+        {
+            return _data;
+        }
+        
+        T* begin()
+        {
+            return _data;
+        }
+        
+        T* end()
+        {
+            return &_data[_size];
+        }
+        
+    private:
+        T* _data;
+        int _size;
+    };
 }
 
 #endif // __R_MATRIX__

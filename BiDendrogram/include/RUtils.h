@@ -2,6 +2,7 @@
 #define __R_UTILS__
 
 #include <iostream>
+#include <vector>
 
 namespace R
 {
@@ -30,6 +31,66 @@ namespace R
 	};
 
 	typedef Size2D_T<unsigned int> Size2D;
+    
+    template<typename T>
+    struct Point2D_T
+    {
+        Point2D_T()
+        {
+            
+        }
+        
+        Point2D_T(const T& X, const T& Y):
+        x(X), y(Y)
+        {
+            
+        }
+        
+        T x, y;
+    };
+    
+    typedef Point2D_T<double> Point;
+    
+    template<typename T>
+    struct Line_T
+    {
+        Line_T(const Point2D_T<T>& p1, const Point2D_T<T>& p2):
+        pt1(p1), pt2(p2)
+        {
+            
+        }
+        
+        Point2D_T<T> pt1, pt2;
+    };
+    
+    typedef Line_T<double> Line;
+    
+    template<typename T>
+    struct Color_T
+    {
+        Color_T()
+        {
+            
+        }
+        
+        Color_T(const T& R,
+                const T& G,
+                const T& B,
+                const T& A):
+        r(R), g(G), b(B), a(A)
+        {
+            
+        }
+        
+        T r, g, b, a;
+    };
+    
+    typedef Color_T<double> Color;
+    typedef std::vector<Color> ColorVector;
+    
+    R::ColorVector GetHeatColors(const int& n);
+    R::ColorVector GetRainbowColors(const int& n);
+
 }
 
 #endif // __R_UTILS__
