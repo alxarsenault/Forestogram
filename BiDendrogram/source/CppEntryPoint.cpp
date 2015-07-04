@@ -20,7 +20,6 @@ inline R::Point indexToPoint(int* size,
 }
 
 
-
  extern "C"
  {
 

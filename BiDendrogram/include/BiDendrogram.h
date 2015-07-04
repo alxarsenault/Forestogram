@@ -107,9 +107,6 @@ protected:
 };
 
 
-
-
-
 class RowDendrogram : public Dendrogram
 {
 public:
