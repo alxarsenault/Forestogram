@@ -152,3 +152,20 @@ ProcessClusterOnRect <- function(size, size_ratio, margin, row_limits, col_limit
 	return(list(rect_points=out$rect_points,
 				n_clust = n_clust));
 }
+
+
+ProcessClusterOnRect <- function(data)
+{
+    dyn.load("lib/BiDendrogram.so");
+    
+    size = dim(data);
+    length = (size[1] - 1) * (size[2] - 1);
+    answer = vector(mode="numeric", length = length * 2);
+    ans_matrix = matrix(answer,  nrow = length,  ncol = 2, byrow = TRUE)
+    
+    out <- .C("ProcessBiClustering",
+              size = size,
+              data = data,
+              answer = ans_matrix);
+
+}

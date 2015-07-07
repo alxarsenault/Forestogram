@@ -7,35 +7,33 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		7CBC1CD61B49A78000EACE5B /* RMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RMatrix.h; path = ../../include/RMatrix.h; sourceTree = "<group>"; };
+		7CBC1CD71B49A79200EACE5B /* BiDendrogram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BiDendrogram.h; path = ../../include/BiDendrogram.h; sourceTree = "<group>"; };
+		7CBC1CD81B49A79200EACE5B /* RUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUtils.h; path = ../../include/RUtils.h; sourceTree = "<group>"; };
+		7CBC1CD91B49A79C00EACE5B /* BiDendrogram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BiDendrogram.cpp; path = ../../source/BiDendrogram.cpp; sourceTree = "<group>"; };
+		7CBC1CDA1B49A79C00EACE5B /* CppEntryPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CppEntryPoint.cpp; path = ../../source/CppEntryPoint.cpp; sourceTree = "<group>"; };
+		7CBC1CDB1B49A79C00EACE5B /* RUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RUtils.cpp; path = ../../source/RUtils.cpp; sourceTree = "<group>"; };
+		7CBC1CDC1B49A81200EACE5B /* BiClust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BiClust.h; path = ../../include/BiClust.h; sourceTree = "<group>"; };
+		7CBC1CDD1B49A81C00EACE5B /* BiClust.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BiClust.cpp; path = ../../source/BiClust.cpp; sourceTree = "<group>"; };
+		7CBC1CDE1B49A9FD00EACE5B /* SimpleExample.R */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; name = SimpleExample.R; path = ../../r_source/SimpleExample.R; sourceTree = "<group>"; };
 		7CCE4BC41B46E754004FA8F9 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		7CCE4BCA1B46E8EC004FA8F9 /* RMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RMatrix.h; path = ../../../include/RMatrix.h; sourceTree = "<group>"; };
-		7CCE4BCB1B46E8EC004FA8F9 /* RUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RUtils.h; path = ../../../include/RUtils.h; sourceTree = "<group>"; };
-		7CCE4BCC1B46E8F6004FA8F9 /* CppEntryPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CppEntryPoint.cpp; path = ../../../source/CppEntryPoint.cpp; sourceTree = "<group>"; };
-		7CCE4BCD1B46E8F6004FA8F9 /* RUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RUtils.cpp; path = ../../../source/RUtils.cpp; sourceTree = "<group>"; };
-		7CCE4BD11B46F1C9004FA8F9 /* BiDendrogram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BiDendrogram.h; path = ../../../include/BiDendrogram.h; sourceTree = "<group>"; };
-		7CCE4BD21B46F1D2004FA8F9 /* BiDendrogram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BiDendrogram.cpp; path = ../../../source/BiDendrogram.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		7CCE4BB11B46E5E6004FA8F9 = {
 			isa = PBXGroup;
 			children = (
+				7CBC1CDE1B49A9FD00EACE5B /* SimpleExample.R */,
+				7CBC1CDD1B49A81C00EACE5B /* BiClust.cpp */,
+				7CBC1CDC1B49A81200EACE5B /* BiClust.h */,
+				7CBC1CD91B49A79C00EACE5B /* BiDendrogram.cpp */,
+				7CBC1CDA1B49A79C00EACE5B /* CppEntryPoint.cpp */,
+				7CBC1CDB1B49A79C00EACE5B /* RUtils.cpp */,
+				7CBC1CD71B49A79200EACE5B /* BiDendrogram.h */,
+				7CBC1CD81B49A79200EACE5B /* RUtils.h */,
+				7CBC1CD61B49A78000EACE5B /* RMatrix.h */,
 				7CCE4BC41B46E754004FA8F9 /* Makefile */,
-				7CCE4BBC1B46E5E6004FA8F9 /* BiDendrogram */,
 			);
-			sourceTree = "<group>";
-		};
-		7CCE4BBC1B46E5E6004FA8F9 /* BiDendrogram */ = {
-			isa = PBXGroup;
-			children = (
-				7CCE4BD21B46F1D2004FA8F9 /* BiDendrogram.cpp */,
-				7CCE4BD11B46F1C9004FA8F9 /* BiDendrogram.h */,
-				7CCE4BCC1B46E8F6004FA8F9 /* CppEntryPoint.cpp */,
-				7CCE4BCD1B46E8F6004FA8F9 /* RUtils.cpp */,
-				7CCE4BCA1B46E8EC004FA8F9 /* RMatrix.h */,
-				7CCE4BCB1B46E8EC004FA8F9 /* RUtils.h */,
-			);
-			path = BiDendrogram;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -170,6 +168,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				New_Setting = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -179,6 +178,7 @@
 		7CCE4BC91B46E777004FA8F9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				New_Setting = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -204,6 +204,7 @@
 				7CCE4BC91B46E777004FA8F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

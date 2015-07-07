@@ -5,6 +5,7 @@
 #include <random>
 
 #include "BiDendrogram.h"
+#include "BiClust.h"
 
 
 inline R::Point indexToPoint(int* size,
@@ -140,6 +141,15 @@ inline R::Point indexToPoint(int* size,
 		// R::Print("NUMBER OF CLUSTER = ", n_cluster);
 		// R::Print("Number of rect = ", rectangles.size());
 	}
+     
+     void ProcessBiClustering(int* size, double* data, double* answer)
+     {
+         R::Matrix2D<double> data_matrix(data, R::Size2D(size[0], size[1]));
+         
+         BiClust clusters;
+         
+         clusters.process(data_matrix);
+     }
 
 
 }
