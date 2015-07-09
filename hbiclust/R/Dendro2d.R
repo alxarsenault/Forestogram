@@ -66,7 +66,7 @@ CombineRowAndColMergeAndHeight <- function(size, row, col, row_height, col_heigh
     return(merge_matrix)
 }
 
-BiClust <- function(data)
+hbiclust <- function(data)
 {
     d <- dist(data, method = "euclidean")
     v <- hclust(d, method = "complete")
@@ -101,7 +101,10 @@ BiClust <- function(data)
     "height" = height_vector,
     "dim" = size,
     "row_order" = row_order,
-    "col_order" = col_order);
+    "col_order" = col_order,
+    "row_name" = rownames(data),
+    "col_name" = colnames(data),
+    "data" = data);
     
     return(newList);
 }
@@ -334,9 +337,12 @@ DrawColNames <- function(size, size_ratio, names, margin)
     }
 }
 
-Dendrogram2Dplot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
+# plot.hbiclust <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
+plot.hbiclust <- function(clust_info, size_ratio = c(0.7, 0.7), cut_height = 9.0)
 {
     
+    # clust_info <- BiClust(data);
+
     # antialias
     # for cairo types, the type of anti-aliasing (if any) to be used. One of c("default", "none", "gray", "subpixel").
     
@@ -349,17 +355,19 @@ Dendrogram2Dplot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
     
     margin = c(0.07, 0.04);
     
-    size = dim(data);
+    # size = dim(data);
+    size = clust_info$dim;
+
+
+    DrawRowNames(size, size_ratio, clust_info$row_name, margin);
+    DrawColNames(size, size_ratio, clust_info$col_name, margin);
     
-    DrawRowNames(size, size_ratio, rownames(data), margin);
-    DrawColNames(size, size_ratio, colnames(data), margin);
     
-    clust_info <- BiClust(data);
     
     merge_info = SplitVectors(size, 
-    clust_info$merge, 
-    clust_info$height, 
-    clust_info$row_col);
+                              clust_info$merge, 
+                              clust_info$height, 
+                              clust_info$row_col);
     
     row_limits = DrawRowDendrogram(size, merge_info, size_ratio, clust_info$row_order, margin, cut_height);
     col_limits = DrawColDendrogram(size, merge_info, size_ratio, clust_info$col_order, margin, cut_height);

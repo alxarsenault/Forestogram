@@ -1,2 +1,4 @@
 useDynLib(hbiclust)
-export(Dendrogram2Dplot)
+export(hbiclust)
+export(plot.hbiclust)
+export(forestogram)

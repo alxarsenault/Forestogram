@@ -1,4 +1,4 @@
-library(rgl)
+
 #source('ForestGLDraw.R')
 #source('ForestDrawingVectors.R')
 #source('ForestUtils.R')
@@ -95,12 +95,43 @@ AddRGLTranslationWithRightButton <-function()
 	pan3d(2)
 }
 
-Forestogramme <- function(size, merge_matrix, 
+forestogram <- function(clust_data,
+					    cut_height = 100000,
+						  draw_cut = TRUE,
+						  draw_side_tree = TRUE,
+						  draw3D = TRUE,
+						  draw2D_grid = TRUE,
+						  line_width = 2,
+						  line_width_2D = 1,
+						  base_contour_width = 1,
+						  cut_base_contour_width = 1)
+{
+	Forestogramme(clust_data$dim,
+				  clust_data$merge,
+				  clust_data$height,
+				  clust_data$row_col,
+				  clust_data$data,
+				  clust_data$row_order,
+				  clust_data$col_order,
+				  cut_height,
+				  draw_cut,
+				  draw_side_tree,
+				  draw3D,
+				  draw2D_grid,
+				  line_width,
+				  line_width_2D,
+				  base_contour_width,
+				  cut_base_contour_width);
+}
+
+Forestogramme <- function(size, 
+						  merge_matrix, 
 						  height_vector, 
 						  rowcol_vector, 
 						  data = 0,
 						  row_permutation = 0, 
 						  col_permutation = 0,
+						  
 						  cut_height = 100000,
 						  draw_cut = TRUE,
 						  draw_side_tree = TRUE,
@@ -115,6 +146,10 @@ Forestogramme <- function(size, merge_matrix,
 	# Start rgl engine.
 	open3d(windowRect = c(0, 0, 600, 600) )  
 	AddRGLTranslationWithRightButton()
+
+
+	scaled_cut_height = cut_height / max(height_vector);
+	isHeightDraw = FALSE;
 
 	#rgl.viewpoint(theta = 0, phi = -90)
 	#rgl.light( theta = 0, phi = 0, viewpoint.rel = TRUE, ambient = "#FF0000", 
@@ -325,41 +360,46 @@ Forestogramme <- function(size, merge_matrix,
 		# DRAW CUT PLANE.
 		if(draw_cut == TRUE)
 		{
-			if(i == cut_height)
+			if(height_vector[i] >= scaled_cut_height)
 			{
-				height = height_vector[i]
-
-				indices = c(1, 2, 3, 4)
-
-				l = length(row_names) + length(col_names)
-				colors = rainbow(l, start = 0.3, end = 0.6)
-				color_index = 1
-				ratio = size[1] / size[2]
-				
-				if(draw_side_tree == TRUE)
+				if(isHeightDraw == FALSE)
 				{
-					# Draw plane line cup on row.
-					segments3d(c(-1.0 * ratio, 1.0), c(1.0 + height, 1.0 + height), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
-	
-					# Draw plane line cup on row.
-					segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
-				}
+					isHeightDraw = TRUE;
+					print("CUT HEIGHT ")
+					height = scaled_cut_height;#height_vector[i] #cut_height
 
-				#if(draw3D == TRUE)
-				{
-					for(n in row_names)
+					indices = c(1, 2, 3, 4)
+
+					l = length(row_names) + length(col_names)
+					colors = rainbow(l, start = 0.3, end = 0.6)
+					color_index = 1
+					ratio = size[1] / size[2]
+					
+					if(draw_side_tree == TRUE)
 					{
-						for(c in col_names)
-						{
-							square = DrawSquaresWithDimensionOfSquare(size, height, 
-															  		  info_array[n, c, 6],
-															  		  info_array[n, c, 7],
-															  		  info_array[n, c, 8],
-															  		  info_array[n, c, 9],
-															  		  line_width = cut_base_contour_width)
+						# Draw plane line cup on row.
+						segments3d(c(-1.0 * ratio, 1.0), c(1.0 + height, 1.0 + height), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
+		
+						# Draw plane line cup on row.
+						segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
+					}
 
-							shade3d( qmesh3d(square,indices), alpha=0.6, col=colors[color_index])
-							color_index <- color_index + 1
+					#if(draw3D == TRUE)
+					{
+						for(n in row_names)
+						{
+							for(c in col_names)
+							{
+								square = DrawSquaresWithDimensionOfSquare(size, height, 
+																  		  info_array[n, c, 6],
+																  		  info_array[n, c, 7],
+																  		  info_array[n, c, 8],
+																  		  info_array[n, c, 9],
+																  		  line_width = cut_base_contour_width)
+
+								shade3d( qmesh3d(square,indices), alpha=0.6, col=colors[color_index])
+								color_index <- color_index + 1
+							}
 						}
 					}
 				}
