@@ -1,0 +1,2 @@
+useDynLib(hbiclust)
+export(Dendrogram2Dplot)
