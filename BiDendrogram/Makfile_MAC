@@ -31,9 +31,9 @@ R_SRC_INCLUDE = -I/Library/Frameworks/R.framework/Resources/include
 INCLUDE_SRC = -I$(INC_DIR) $(R_SRC_INCLUDE) -I/usr/local/include -I/usr/local/include/freetype2 -I/opt/X11/include
 
 # Linker commands.
-LD_INCLUDE = #-L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib
-LD_FLAGS = -shared #-dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
-LD_LIB = #-F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+LD_INCLUDE = -L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib
+LD_FLAGS = -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress
+LD_LIB = -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
 
 all: createDir $(OBJ_FILES)
 	$(CC) $(LD_FLAGS) $(LD_INCLUDE) $(OBJ_FILES) $(LD_LIB) -o $(LIB_DIR)/$(DYN_LIB_NAME)

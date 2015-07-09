@@ -9,7 +9,7 @@ ARCH := $(shell getconf LONG_BIT)
 ## x86 vs arm.
 PROCESSOR_TYPE := $(shell uname -m)
 
-CC = g++
+CC = clang++
 CC_FLAGS = -std=c++11 -DNDEBUG  -fPIC  -Wall -mtune=core2 -g -O2 
 
 LIB_DIR = lib

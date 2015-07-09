@@ -407,8 +407,8 @@ Dendrogram2D.plot(gaelle, size_ratio = c(0.7, 0.7));
 d <- dist(gaelle, method = "euclidean")
 v <- hclust(d, method = "ward.D")
 
-#print(v$merge);
-#print(v$height)
+print(v$merge);
+print(v$height)
 
 
 # print(colnames(gaelle))
