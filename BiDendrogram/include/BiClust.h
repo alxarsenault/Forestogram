@@ -2,9 +2,14 @@
 #define __B_CLUST__
 
 #include "RMatrix.h"
+#include <map>
 
-typedef std::vector<std::vector<double>> Matrix;
+
 typedef ax::Math::Vector<double> axMathVec;
+typedef std::pair<int, int> IntPair;
+
+//typedef std::vector<std::vector<double>> Matrix;
+typedef std::map<IntPair, double> DistMatrix;
 
 namespace ax
 {
@@ -17,12 +22,14 @@ namespace ax
         
         ax::Math::Vector<double> center;
         int n_row_clust, n_col_clust;
-        std::string name;
         std::vector<int> index_list;
+        int name;
+        //std::string name;
     };
 }
 
-typedef std::vector<ax::Cluster> ClusterData;
+//typedef std::vector<ax::Cluster> ClusterData;
+typedef std::map<int, ax::Cluster> ClusterData;
 
 class BiClust
 {
@@ -33,12 +40,17 @@ public:
     
     
 private:
-    std::vector<ax::Cluster> initClusterData(const R::Matrix2D<double>& data);
-    Matrix initDistanceMatrix(const R::Matrix2D<double>& data);
+    ClusterData initClusterData(const R::Matrix2D<double>& data);
     
-    void calculateDistances(const ClusterData& clusters, Matrix& distMatrix);
-    std::pair<int, int> getNextMergeVectorsIndex(const ClusterData& clusters,
-                                                 const Matrix& distMatrix);
+    DistMatrix initDistanceMatrix(ClusterData& clusters);
+    
+    void calculateDistances(const ClusterData& clusters,
+                            DistMatrix& distMatrix,
+                            const IntPair& merge,
+                            const int& merge_index);
+    
+    IntPair getNextMergeVectorsIndex(const ClusterData& clusters,
+                                     const DistMatrix& distMatrix);
     
     void mergeTwoCluster(ClusterData& clusters,
                          const std::pair<int, int>& merge,

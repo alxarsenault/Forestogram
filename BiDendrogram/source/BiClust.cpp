@@ -5,11 +5,6 @@
 #include <string>
 #include <vector>
 
-
-
-
-
-
 BiClust::BiClust()
 {
     
@@ -17,478 +12,262 @@ BiClust::BiClust()
 
 ClusterData BiClust::initClusterData(const R::Matrix2D<double>& data)
 {
-    ClusterData clusters(data.size().row);
+    ClusterData clusters;//(data.size().row);
     
-    int ncol = data.size().col;
+    const int nrow = data.size().row;
+    const int ncol = data.size().col;
     
-    for(int j = 0; j < clusters.size(); j++)
+    for(int j = 0; j < nrow; j++)
     {
-        clusters[j].n_row_clust = 1;
-        clusters[j].name = std::to_string(-(j+1));
-        clusters[j].index_list = std::vector<int>(j);
+        int index = -(j+1);
         
-        auto& v = clusters[j].center.getStdVector();
+        ax::Cluster clust;
+        clust.n_row_clust = 1;
+        clust.name = index;
+        clust.index_list = std::vector<int>(j);
+        
+        auto& v = clust.center.getStdVector();
         v.resize(ncol);
         
         for(int i = 0; i < ncol; i++)
         {
             v[i] = data(j, i);
         }
+        
+        clusters[index] = clust;
     }
     
     return clusters;
 }
 
-Matrix BiClust::initDistanceMatrix(const R::Matrix2D<double>& data)
+//DistMatrix BiClust::initDistanceMatrix(const R::Matrix2D<double>& data)
+//{
+//    int nrow = data.size().row;
+//    
+//    DistMatrix distMatrix;//(nrow - 1);
+//    
+//    for(auto& n : distMatrix)
+//    {
+//        // Number of column.
+//        n.resize(nrow - 1);
+//        std::fill_n(n.begin(), nrow, 0.0);
+//    }
+//    
+//    return distMatrix;
+//}
+
+IntPair getFormatedPair(const int& i1, const int& i2)
 {
-    int nrow = data.size().row;
-    
-    Matrix distMatrix(nrow);
-    
-    for(auto& n : distMatrix)
+    if(i1 > i2)
     {
-        n.resize(nrow);
-        std::fill_n(n.begin(), nrow, 0.0);
+        return IntPair(i2, i1);
+    }
+    
+    return IntPair(i1, i2);
+}
+
+DistMatrix BiClust::initDistanceMatrix(ClusterData& clusters)
+{
+    DistMatrix distMatrix;//(nrow - 1);
+    
+    // For all clusters.
+    for(int i = 0; i < clusters.size() - 1; i++)
+    {
+        for(int k = i + 1; k < clusters.size(); k++)
+        {
+            int i1 = -(i+1);
+            int i2 = -(k+1);
+            IntPair index(getFormatedPair(i1, i2));
+            distMatrix[index] = clusters[i1].center.Dist(clusters[i2].center);
+            
+//            R::Print(i1, i2, " : ", clusters[i1].center.Dist(clusters[i2].center));
+        }
     }
     
     return distMatrix;
 }
 
-void BiClust::calculateDistances(const ClusterData& clusters, Matrix& distMatrix)
+void BiClust::calculateDistances(const ClusterData& clusters,
+                                 DistMatrix& distMatrix,
+                                 const IntPair& namedMerge,
+                                 const int& merge_index)
 {
-    for(int i = 0; i < clusters.size(); i++)
+//    IntPair getFormatedPair(const int& i1, const index& i2);
+    
+    
+    // Find ratio.
+    int n1 = clusters.find(namedMerge.first)->second.n_row_clust;
+    int n2 = clusters.find(namedMerge.second)->second.n_row_clust;
+    
+    for(auto& n : clusters)
     {
-        for(int k = i + 1; k < clusters.size(); k++)
+        int clust_name = n.second.name;
+        
+        if(clust_name != namedMerge.first && clust_name != namedMerge.second)
         {
-            distMatrix[i][k] = clusters[i].center.Dist(clusters[k].center);
+            IntPair v1Index(namedMerge.first, clust_name);
+            IntPair v2Index(namedMerge.second, clust_name);
+            
+            double v1 = distMatrix[v1Index];
+            double v2 = distMatrix[v2Index];
+            
+            IntPair index(getFormatedPair(merge_index, clust_name));
+            
+            distMatrix[index] = (v1 * n1 + v2 * n2)/ (n1 + n2);
         }
     }
-}
-
-std::pair<int, int> BiClust::getNextMergeVectorsIndex(const ClusterData& clusters,
-                                                      const Matrix& distMatrix)
-{
-    double min = 10000000.0;
-    std::pair<int, int> min_index(-1, -1);
     
-    for(int i = 0; i < clusters.size(); i++)
+    
+    std::vector<IntPair> toDelete;
+    
+    for(auto& n : distMatrix)
     {
-        for(int k = i + 1; k < clusters.size(); k++)
+        if(n.first.first == namedMerge.first || n.first.first == namedMerge.second ||
+           n.first.second == namedMerge.first || n.first.second == namedMerge.second)
         {
-           if(distMatrix[i][k] < min)
-           {
-               min = distMatrix[i][k];
-               min_index = std::pair<int, int>(i, k);
-           }
+            toDelete.push_back(n.first);
         }
     }
     
-    return min_index;
-}
-
-void BiClust::mergeTwoCluster(ClusterData& clusters,
-                              const std::pair<int, int>& merge,
-                              const int& merge_index)
-{
-    ax::Cluster& c1 = clusters[merge.first];
-    ax::Cluster& c2 = clusters[merge.second];
+    for(auto& n : toDelete)
+    {
+        distMatrix.erase(n);
+    }
     
-    double n_merge = c1.n_row_clust + c2.n_row_clust;
-    c1.center = ((c1.center * c1.n_row_clust) + (c2.center * c2.n_row_clust)) / n_merge;
-    
-    c1.n_row_clust = n_merge;
-    c1.name = std::to_string(merge_index);
-    
-    c1.index_list.insert(c1.index_list.end(),
-                         c1.index_list.begin(),
-                         c1.index_list.end());
-    
-    clusters.erase(clusters.begin() + merge.second);
-}
-
-//std::pair<int, int> DistVectorIndexToVectorIndex(const int& index,
-//                                                 const int& nVector)
-//{
-//    for(int i = 0, vec_index = 0; i < nVector; i++)
-//    {
-//        for(int k = i + 1; k < nVector; k++)
-//        {
-//            if(vec_index++ == index)
-//            {
-//                return std::pair<int, int>(i, k);
-//            }
-//        }
-//    }
-//    
-//    return std::pair<int, int>(-1, -1);
-//}
-
-//std::vector<double> CalculateDistances(const int& nDist,
-//                                       const std::vector<ax::Cluster>& clusters)
-//{
-//    std::vector<double> dist_vector(nDist);
-//    
-//    for(int i = 0, vec_index = 0; i < clusters.size(); i++)
+//    // For all clusters.
+//    for(int i = 0; i < clusters.size() - 1; i++)
 //    {
 //        for(int k = i + 1; k < clusters.size(); k++)
 //        {
-//            dist_vector[vec_index++] = clusters[i].center.Dist(clusters[k].center);
+//            distMatrix[i][k] = clusters[i].center.Dist(clusters[k].center);
 //        }
 //    }
-//    
-//    return dist_vector;
-//}
+}
 
-//std::pair<int, int> GetClosestVectorIndex(std::vector<double> dist_vector,
-//                                          const int& nVector,
-//                                          double& distance)
-//{
-////    std::vector<double>::iterator result = std::min_element(dist_vector.begin(),
-////                                                            dist_vector.end());
-////    
-////    distance = *result;
-////    
-////    int index = std::distance(dist_vector.begin(), result);
-//    
+IntPair BiClust::getNextMergeVectorsIndex(const ClusterData& clusters,
+                                          const DistMatrix& distMatrix)
+{
 //    double min = 10000000.0;
-//    int index = -1 ;
-//    for(int i = 0; i < dist_vector.size(); i++)
+//    IntPair min_index(-1, -1);
+    
+//    for(int i = 0; i < clusters.size(); i++)
 //    {
-//        if(dist_vector[i] < min)
+//        for(int k = i + 1; k < clusters.size(); k++)
 //        {
-//            min = dist_vector[i];
-//            index = i;
+//           if(distMatrix[i][k] < min)
+//           {
+//               min = distMatrix[i][k];
+//               min_index = IntPair(i, k);
+//           }
 //        }
 //    }
-//    
-//    distance = min;
-//    return DistVectorIndexToVectorIndex(index, nVector);
-////
-////    return DistVectorIndexToVectorIndex(index, nVector);
-//
-//}
+    
+//    auto n = std::min_element(distMatrix.begin(), distMatrix.end());
+    auto n = min_element(distMatrix.begin(), distMatrix.end(),
+                         [](const std::pair<IntPair, double>& v1,
+                            const std::pair<IntPair, double>& v2) -> bool
+    {
+        return v1.second < v2.second;
+    });
+    
+    return n->first;
+}
 
-//void MergeTwoCluster(std::vector<ax::Cluster>& clusters,
-//                     const std::pair<int, int>& index,
-//                     const int& merge_index,
-//                     std::vector<std::pair<std::string, std::string>>& merge_matrix)
-//{
-//    ax::Cluster& c1 = clusters[index.first];
-//    ax::Cluster& c2 = clusters[index.second];
-//
-//    
-//    merge_matrix.emplace_back(std::pair<std::string, std::string>(c1.name, c2.name));
-//    
-//    double n_merge = c1.n_row_clust + c2.n_row_clust;
-//    c1.center = ((c1.center * c1.n_row_clust) + (c2.center * c2.n_row_clust)) / n_merge;
-//    
-//    c1.n_row_clust = n_merge;
-//    c1.name = std::to_string(merge_index);
-//    
-//    c1.index_list.insert(c1.index_list.end(), c1.index_list.begin(), c1.index_list.end());
-//    
-//    clusters.erase(clusters.begin() + index.second);
-//}
+void BiClust::mergeTwoCluster(ClusterData& clusters,
+                              const IntPair& merge,
+                              const int& merge_index)
+{
+    auto n1 = clusters.find(merge.first);
+    auto n2 = clusters.find(merge.second);
+    
+    if(n1 == clusters.end())
+    {
+        R::Print("Error");
+        exit(0);
+    }
+    if(n2 == clusters.end())
+    {
+        R::Print("Error");
+        exit(0);
+    }
 
-//double DistValue(const int& i1, const int& i2,
-//                 const std::vector<double>& global_dist,
-//                 const int& nVector)
-//{
-//    
-////    return global_dist[i1 * ];
-//    
-//    for(int i = 0, vec_index = 0; i < nVector; i++)
-//    {
-//        for(int k = i + 1; k < nVector; k++)
-//        {
-//                if((i1 == i && i2 == k) || (i1 == k && i2 == i))
-//                {
-//                    return global_dist[vec_index];
-//                }
-//            
-//            vec_index++;
-//        }
-//    }
-//
-//    
-//    
-//    return -10000.0;
-//}
+    
+    ax::Cluster& c1 = n1->second;
+    ax::Cluster& c2 = n2->second;
 
-//double DistBetwwenTwoClust(const std::vector<double>& global_dist,
-//                           const ax::Cluster& c1, const ax::Cluster& c2,
-//                           const int& nVector)
-//{
-//    double sum_dist = 0.0;
+    double n_merge = c1.n_row_clust + c2.n_row_clust;
+    c1.center = ((c1.center * c1.n_row_clust) + (c2.center * c2.n_row_clust)) / n_merge;
+
+    c1.n_row_clust = n_merge;
+    c1.name = merge_index;
+
+//    // Merge list of index.
+    c1.index_list.insert(c1.index_list.end(),
+                         c1.index_list.begin(),
+                         c1.index_list.end());
+
+    
+    // Add new cluster.
+    clusters[merge_index] = c1;
+
+    clusters.erase(n1);
+    clusters.erase(n2);
+
+}
+
+void recalculateDistance(ClusterData& clusters,
+                         DistMatrix& distMatrix,
+                         const IntPair& merge)
+{
+
+//    std::vector<double> new_clust(clusters.size() - 1);
 //    
-//    
-////    for(int i = 0; i < c1.index_list.size(); i++)
-//    for(auto& n : c1.index_list)
-//    {
-////        for(int k = 0; k < c2.index_list.size(); k++)
-//        for(auto& k : c2.index_list)
-//        {
-//            sum_dist += DistValue(n, k, global_dist, nVector);
-//        }
-//    }
-//    
-//    return sum_dist / (c1.n_row_clust * c2.n_row_clust);
-//}
-//
-//std::pair<int, int> FindNextMerge(const std::vector<double>& global_dist,
-//                                  std::vector<ax::Cluster>& clusters)
-//{
 //    for(int i = 0; i < clusters.size(); i++)
 //    {
 //        
 //    }
-//}
+//    
+//    distMatrix
+}
 
 void BiClust::process(const R::Matrix2D<double>& data)
 {
     ClusterData clusters = initClusterData(data);
-    Matrix distMatrix = initDistanceMatrix(data);
-    
-    calculateDistances(clusters, distMatrix);
+    DistMatrix distMatrix = initDistanceMatrix(clusters);
+    std::vector<IntPair> mergeMatrix;
     
     
     int merge_index = 1;
+    int i = 0;
     
-    std::pair<int, int> merge = getNextMergeVectorsIndex(clusters, distMatrix);
     
-    R::Print("MERGE :", merge.first, merge.second);
-    
-    mergeTwoCluster(clusters, merge, merge_index);
-    
-//    R::Print("BiClust::process");
-    
-//    int nVector = data.size().row;
-    
-//    std::vector<ax::Cluster> clusters(nVector);
-//    InitClusterData(clusters, data);
+    R::Print("SIZE : ", clusters.size());
+    //--------------------------------------------------------------------------
+    while(clusters.size() > 1)
+    {
+        IntPair namedMerge = getNextMergeVectorsIndex(clusters, distMatrix);
+        
+        mergeMatrix.push_back(namedMerge);
+        
+        // Recalculate new distances before merging.
+        calculateDistances(clusters, distMatrix, namedMerge, merge_index);
 
-    
-    
-//    int nDist = nVector * (nVector - 1) * 0.5;
-    
-//    R::Print("Size  :", data.size().row, data.size().col);
-//    R::Print("NDist :", nDist);
+        // Merge cluster in ClusterData matrix.
+        mergeTwoCluster(clusters, namedMerge, merge_index);
+        
+        merge_index++;
+        
+//        R::Print("SIZE : ", clusters.size());
+    }
     
     
     //--------------------------------------------------------------------------
-    // Init cluster data.
-    
-//    int merge_index = 1;
-//    std::vector<std::pair<std::string, std::string>> merge_matrix;
-//    std::vector<double> heights;
-//    
-    
-    
-//    R::Print("DISTANCEEEE  :", clusters[50 - 1].center.Dist(clusters[51 - 1].center));
-//    
-//    
-//    ax::Math::Vector<double> bb = clusters[45 - 1].center + clusters[46 - 1].center;
-//    bb = bb * 0.5;
-//    R::Print("DISTANCEEEE  :", bb.Dist(clusters[44 - 1].center));
-//    
-//    
-//    double dd = clusters[45 - 1].center.Dist(clusters[44 - 1].center);
-//    dd += clusters[46 - 1].center.Dist(clusters[44 - 1].center);
-//    
-//    dd *= 0.5;
-//    
-//    R::Print("AVEAGGART  :", dd);
 
-//    int nDist = clusters.size() * (clusters.size() - 1) / 2;
-//    std::vector<double> global_dist(CalculateDistances(nDist, clusters));
-    
-//    std::vector<std::vector<double>> global_dist(CalculateDistances(nDist, clusters));
-//    std::vector<std::vector<double>> global_distances(data.size().row * data.size().col);
-    
-    
-    
-//    while(clusters.size() > 1)
-//    {
-////        int nDist = clusters.size() * (clusters.size() - 1) / 2;
-////        std::vector<double> dist_vector(CalculateDistances(nDist, clusters));
-//        
-//        double dist_min = 100000000.0;
-//        std::pair<int, int> merge_pair;
-//        
-//        for(int j = 0; j < clusters.size(); j++)
-//        {
-//            for(int i = j + 1; i < clusters.size(); i++)
-//            {
-//                double d = DistBetwwenTwoClust(global_dist,
-//                                               clusters[i], clusters[j],
-//                                               nVector);
-//                if(d < dist_min)
-//                {
-//                    dist_min = d;
-//                    merge_pair = std::pair<int, int>(i, j);
-//                }
-//            }
-//        }
-//        
-//        double DistBetwwenTwoClust(const std::vector<double>& global_dist,
-//                                   const ax::Cluster& c1, const ax::Cluster& c2)
-//        std::pair<int, int> min_dist = GetClosestVectorIndex(dist_vector,
-//                                                             clusters.size(),
-//                                                             dist);
-        
-//        if(min_dist.first == min_dist.second)
-//        {
-//            R::Print("CLOSEST ERROR");
-//        }
-        
-//         MergeTwoCluster(clusters, merge_pair, merge_index, merge_matrix);
-//        MergeTwoCluster(clusters, min_dist, merge_index, merge_matrix);
-        
-//        R::Print(dist);
-        
-        
-//        if(heights.size())
-//        {
-//            double l_height = heights[heights.size() - 1];
-//            heights.push_back(l_height + dist - l_height);
-//        }
-//        else
-//        {
-//            heights.push_back(dist_min);
-////        }
-//        
-//        merge_index++;
-//    }
+    for(auto& n : mergeMatrix)
+    {
+        R::Print(n.first, n.second);
+    }
     
     
     
-    
-    // Merge two cluster.
-//    int i = 1;
-//    for(auto& n : merge_matrix)
-//    {
-//        R::Print(i++, " : ", n.first, n.second);
-//    }
-//    
-//    
-//    for(auto& n : heights)
-//    {
-//        R::Print(n);
-//    }
-    
-    
-    
-    
-    // Find all distance values.
-//    std::vector<double> dist_vector(nDist);
-//    
-//    for(int i = 0, vec_index = 0; i < nVector; i++)
-//    {
-//        for(int k = i + 1; k < nVector; k++)
-//        {
-//            dist_vector[vec_index++] = clusters[i].center.Dist(clusters[k].center);
-//        }
-//    }
-    
-//    std::vector<double>::iterator result = std::min_element(dist_vector.begin(),
-//                                                            dist_vector.end());
-//    
-//    int index = std::distance(dist_vector.begin(), result);
-//    
-//    std::pair<int, int> min_dist = DistVectorIndexToVectorIndex(index, nVector);
-    
-//    R::Print("MERGE :", min_dist.first, min_dist.second);
-//    
-//    R::Print("DIST -> ", clusters[min_dist.first].center.Dist(clusters[min_dist.second].center));
-//    
-    
-//    int ncol = data.size().col;
-//    
-//    for(int j = 0; j < nVector; j++)
-//    {
-//        clusters_data[j].n_vector = 1;
-//        auto& v = clusters_data[j].center.getStdVector();
-//        v.resize(ncol);
-//        
-//        for(int i = 0; i < v.size(); i++)
-//        {
-//            v[i] = data(j, i);
-//        }
-//    }
-    
-    
-    
-//    std::vector<axMathVec> data_vectors(nVector);
-//
-//    for(int j = 0; j < data.size().row; j++)
-//    {
-//        axMathVec vec(data.size().col);
-//        
-//        for(int i = 0; i < vec.size(); i++)
-//        {
-//            vec[i] = data(j, i);
-//        }
-//        
-//        data_vectors[j] = vec;
-//    }
-    //--------------------------------------------------------------------------
-    
-    
-//    // Find all distance values.
-//    std::vector<double> dist_vector(nDist);
-//    
-//    int vec_index = 0;
-//    
-//    for(int i = 0; i < nVector; i++)
-//    {
-//        for(int k = i + 1; k < nVector; k++)
-//        {
-//            dist_vector[vec_index++] = data_vectors[i].Dist(data_vectors[k]);
-//        }
-//    }
-    //--------------------------------------------------------------------------
-    
-//    for(int i = 0; i < dist_vector.size(); i++)
-//    {
-//        R::Print(i, " : ", dist_vector[i]);
-//    }
-    
-    // Find min value.
-    
-    
-    // Merge data.
-    
-    
-    // Find new distance values.
-    
-
-//    std::vector<double> dist_vector(nDist);
-//    
-//    for(int i = 0, vec_index = 0; i < nVector; i++)
-//    {
-//        for(int k = i + 1; k < nVector; k++)
-//        {
-//            double dist = 0.0;
-//            
-//            for(int d = 0; d < data.size().col; d++)
-//            {
-//                double v1 = data(i, d);
-//                double v2 = data(k, d);
-//                
-//                dist += pow(v1 - v2, 2);
-//            }
-//
-//            dist_vector[vec_index++] = sqrt(dist);
-//        }
-//    }
-//    
-//    R::Print("VEC DIST :", dist_vector.size());
-//    
-//    for(int i = 0; i < dist_vector.size(); i++)
-//    {
-//        R::Print(i , " : ", dist_vector[i]);
-//    }
-//    
-//    
-
 }

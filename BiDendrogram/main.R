@@ -401,7 +401,7 @@ Dendrogram2D.plot <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
 library(bclust)
 data(gaelle)
 
-# Dendrogram2D.plot(gaelle, size_ratio = c(0.7, 0.7));
+ Dendrogram2D.plot(gaelle, size_ratio = c(0.7, 0.7));
 ProcessClusterOnRect(gaelle);
 
 d <- dist(gaelle, method = "euclidean")
