@@ -2,22 +2,6 @@ DrawPlaneAndGrid <- function(size, line_width = 2)
 {
 	data = CreatePlaneGridDrawingVectors(size)
 	segments3d(data[1, ], data[2, ], data[3, ], col=rgb(0, 0, 0), lwd=line_width, alpha=1.0)
-
-	# Draw text row.
-	# for (i in 1:(size[1]))
-	# {
-	# 	x_line_pos = (i-1) / size[1] * (1.0 * ratio + 1) - 1 * ratio
-	# 	x_line_pos <- x_line_pos + 1.0 / size[1]
-	# 	text3d(x_line_pos, -1.0, 0.0, "Test", col=rgb(0.0, 0.0, 0.0), adj=0.5)
-
-	# }
-
-	# for (i in 1:size[2]) 
-	# {
-	# 	y_line_pos = (i-1) / (size[2]) * (2) - 1
-	# 	y_line_pos <- y_line_pos + 1.0 / size[2]
-	# 	text3d(-1.0, y_line_pos, 0.0, "Test", col=rgb(0.0, 0.0, 0.0), adj=0.5)
-	# }
 }
 
 DrawSquaresOnPlane <- function(size, height, colors = cm.colors(10, alpha = 1), color_index )
@@ -89,7 +73,7 @@ DrawLegend <- function()
 
 MergeTwoRowOnPlaneView <- function(info_plane_row, v1, v2, height, size, color = rgb(0.0, 0.0, 0.0), alpha = 1.0, line_width_2D = 2)
 {
-	data = CreateRowPlaneViewDrawingVectors(info_plane_row, v1, v2, height)
+	data = CreateRowPlaneViewDrawingVectors(info_plane_row, v1, v2, height);
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width_2D, alpha=alpha)
 }
 

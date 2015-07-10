@@ -106,6 +106,8 @@ hbiclust <- function(data)
     "col_name" = colnames(data),
     "data" = data);
     
+    class(newList) <- "hbiclust";
+
     return(newList);
 }
 
@@ -338,7 +340,7 @@ DrawColNames <- function(size, size_ratio, names, margin)
 }
 
 # plot.hbiclust <- function(data, size_ratio = c(0.5, 0.5), cut_height = 9.0)
-plot.hbiclust <- function(clust_info, size_ratio = c(0.7, 0.7), cut_height = 9.0)
+hbiclust.plot <- function(clust_info, size_ratio = c(0.7, 0.7), cut_height = 9.0)
 {
     
     # clust_info <- BiClust(data);

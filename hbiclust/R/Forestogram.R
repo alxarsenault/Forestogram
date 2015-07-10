@@ -1,10 +1,4 @@
 
-#source('ForestGLDraw.R')
-#source('ForestDrawingVectors.R')
-#source('ForestUtils.R')
-#source('ForestRowColPermute.R')
-#source('ForestImage.R')
-
 CreatePlaneColors <- function(data, color_range = 10)
 {
 	plane_colors = 0
@@ -278,7 +272,7 @@ Forestogramme <- function(size,
 			row_names <- CopieExceptTwoName(s1, s2, row_names)
 
 			# Change array row size.
-			array_size[1] <- array_size[1] - 1
+			array_size[1] <- array_size[1] - 1;
 
 		}
 		#----------------------------------------------------
@@ -341,9 +335,9 @@ Forestogramme <- function(size,
 			}
 
 			# Resize info_plane_col.
-			y_pos = (info_plane_col[v1, 2] + info_plane_col[v2, 2]) * 0.5
-			info_plane_col[v1, 2] = y_pos
-			info_plane_col[v1, 3] = height_vector[i]
+			y_pos = (info_plane_col[v1, 2] + info_plane_col[v2, 2]) * 0.5;
+			info_plane_col[v1, 2] = y_pos;
+			info_plane_col[v1, 3] = height_vector[i];
 
 			# Increment global column name counter.
 			col_name_count <- col_name_count + 1
@@ -365,15 +359,15 @@ Forestogramme <- function(size,
 				if(isHeightDraw == FALSE)
 				{
 					isHeightDraw = TRUE;
-					print("CUT HEIGHT ")
-					height = scaled_cut_height;#height_vector[i] #cut_height
+					height = scaled_cut_height;
 
 					indices = c(1, 2, 3, 4)
 
-					l = length(row_names) + length(col_names)
-					colors = rainbow(l, start = 0.3, end = 0.6)
-					color_index = 1
-					ratio = size[1] / size[2]
+					l = length(row_names) * length(col_names)
+
+					colors = rainbow(l);
+					color_index = 1;
+					ratio = size[1] / size[2];
 					
 					if(draw_side_tree == TRUE)
 					{
@@ -398,7 +392,8 @@ Forestogramme <- function(size,
 																  		  line_width = cut_base_contour_width)
 
 								shade3d( qmesh3d(square,indices), alpha=0.6, col=colors[color_index])
-								color_index <- color_index + 1
+
+								color_index <- color_index + 1;
 							}
 						}
 					}

@@ -1,4 +1,4 @@
 useDynLib(hbiclust)
 export(hbiclust)
-export(plot.hbiclust)
+export(hbiclust.plot)
 export(forestogram)

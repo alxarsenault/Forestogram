@@ -2,16 +2,16 @@ DrawSquares <- function(size, height, index_x, index_y)
 {
 	ratio = size[1] / size[2]
 
-	ratio_x = (index_x-1) / size[1]
-	ratio_y = (index_y-1) / size[2]
-	ratio_x2 = (index_x) / size[1]
-	ratio_y2 = (index_y) / size[2]
+	ratio_x = (index_x-1) / size[1];
+	ratio_y = (index_y-1) / size[2];
+	ratio_x2 = (index_x) / size[1];
+	ratio_y2 = (index_y) / size[2];
 
-	pos_x_left = -1.0 * ratio + (ratio + 1.0) * ratio_x
-	pos_x_right = -1.0 * ratio + (ratio + 1.0) * ratio_x2
+	pos_x_left = -1.0 * ratio + (ratio + 1.0) * ratio_x;
+	pos_x_right = -1.0 * ratio + (ratio + 1.0) * ratio_x2;
 
-	pos_y_left = -1.0 + 2.0 * ratio_y
-	pos_y_right = -1.0 + 2.0 * ratio_y2
+	pos_y_left = -1.0 + 2.0 * ratio_y;
+	pos_y_right = -1.0 + 2.0 * ratio_y2;
 	
 	# Draw floor plane.
 	square <- c( 
@@ -21,9 +21,7 @@ DrawSquares <- function(size, height, index_x, index_y)
 	 pos_x_left,  pos_y_right, height, 1.0
 	)
 
-	return (square)
-	# shade3d( qmesh3d(square,indices), alpha=0.9, col=color)
-
+	return (square);
 }
 
 CreatePlaneGridDrawingVectors <- function(size)

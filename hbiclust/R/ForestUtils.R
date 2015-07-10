@@ -17,8 +17,8 @@ CreateColNames <- function(n_col)
 
 	for(i in 1:n_col)
 	{
-		val = toString(-i)
-		v[val] = n_col - (i - 1)
+		val = toString(-i);
+		v[val] = n_col - (i - 1);
 	}
 
 	return (v)
@@ -54,14 +54,24 @@ MergeMatrix <- function(size, data)
 # DONE IN CPP (RStudio).
 MiddleSquarePoint <- function(row, col, size)
 {
-	ratio = size[1] / size[2]
-	delta = (1.0 * ratio + 1)
-	delta_over_size = delta / size[1]
+	ratio = size[1] / size[2];
 
-	y = (row * delta_over_size - 1 * ratio) - 0.5 * delta_over_size
-	x = 1.0 - 1.0 / size[2] * (2 * col - 1.0)
+	delta = (1.0 * ratio + 1);
 
-	return (c(y, x))
+	delta_over_size = delta / size[1];
+
+##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	x = 1.0 - 1.0 / size[2] * (2 * col - 1.0);
+	# x = 1.0 / size[2] * (2 * col - 1.0);
+##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	y = (row * delta_over_size - 1 * ratio) - 0.5 * delta_over_size;
+	# y = 1.0 - y;
+
+	return(c(y, x));
+	# return(c(x, y));
 }
 
 
@@ -87,11 +97,15 @@ CreateInfoArray <- function(size, data_matrix)
 						dimnames = NULL)
 
 	data_matrix_index = 1
+
+	# Row.
 	for(j in 1:size[1])
 	{
+		# Column.
 		for(i in 1:size[2])
 		{
-			point = MiddleSquarePoint(j, i, size)
+			point = MiddleSquarePoint(j, i, size);
+
 			ratio = size[1] / size[2]
 			ratio_y = (size[2] - i) / size[2]
 			ratio_x = (j-1) / size[1]
@@ -104,6 +118,13 @@ CreateInfoArray <- function(size, data_matrix)
 
 			pos_y_left = -1.0 + 2.0 * ratio_y
 			pos_y_right = -1.0 + 2.0 * ratio_y2
+
+			##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			# pos_y_left = 1.0 - pos_y_left
+			# pos_y_right = 1.0 - pos_y_right
+			##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			##!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 			info_array[j, i, 1] = point[1]    # x
 			info_array[j, i, 2] = point[2]    # y
