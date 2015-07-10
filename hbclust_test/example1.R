@@ -26,9 +26,21 @@ dimnames(data) <- list(row_names, col_names)
 
 v <- hbiclust(data);
 
-forestogram(v, cut_height = 11.0, interpolate_tree_colors = FALSE, cut_base_contour_width = 2);
+forestogram(v, cut_height = 11.0, 
+			line_width = 3.0, 
+			interpolate_tree_colors = FALSE, 
+			cut_base_contour_width = 2, 
+			cut_base_alpha = 0.4,
+			draw_only_from_cut = TRUE);
 # hbiclust.plot(v, cut_height = 11);
 
 # d <- dist(t(gaelle), method = "euclidean")
 # hc <- hclust(d, method = "complete")
 # plot(hc);
+
+# library(rpanel)
+# x <- rnorm(25)
+# panel <- rp.control(v = 0, x = x)
+# rp.tkrplot(panel, plot, draw, pos="right")
+# rp.slider(panel, v, min(x), max(x), redraw, name = "slider")
+# rp.doublebutton(panel, v, diff(range(x))/100, action=redraw1)

@@ -106,7 +106,8 @@ forestogram <- function(clust_data,
 						  interpolate_tree_line_width = TRUE,
 						  interpolate_tree_line_alpha = TRUE,
 						  interpolate_tree_line_width_2D = TRUE,
-						  interpolate_tree_line_alpha_2D = TRUE)
+						  interpolate_tree_line_alpha_2D = TRUE,
+						  draw_only_from_cut = FALSE)
 {
 	Forestogramme(clust_data$dim,
 				  clust_data$merge,
@@ -131,7 +132,8 @@ forestogram <- function(clust_data,
 				  interpolate_tree_line_width,
 				  interpolate_tree_line_alpha,
 				  interpolate_tree_line_width_2D,
-				  interpolate_tree_line_alpha_2D);
+				  interpolate_tree_line_alpha_2D,
+				  draw_only_from_cut);
 }
 
 Forestogramme <- function(size, 
@@ -157,7 +159,8 @@ Forestogramme <- function(size,
 						  interpolate_tree_line_width = TRUE,
 						  interpolate_tree_line_alpha = TRUE,
 						  interpolate_tree_line_width_2D = TRUE,
-						  interpolate_tree_line_alpha_2D = TRUE)
+						  interpolate_tree_line_alpha_2D = TRUE,
+						  draw_only_from_cut = FALSE)
 {
     library(rgl);
 	# Start rgl engine.
@@ -186,7 +189,7 @@ Forestogramme <- function(size,
 		rgl.light(viewpoint.rel = FALSE)
 
 
-		view3d( theta = 0, phi = 0);
+		# view3d( theta = 0, phi = 0);
 		# light3d(viewpoint.rel = FALSE) 
     # light3d(diffuse="gray10", specular="gray25")
 
@@ -234,7 +237,13 @@ Forestogramme <- function(size,
 	{
 		if(draw2D_grid == TRUE)
 		{
-			Draw2DAxes(size, 0.3)
+			if(draw_only_from_cut == TRUE)
+			{
+				Draw2DAxes(size, 0.3, z = scaled_cut_height)
+			} else {
+				Draw2DAxes(size, 0.3)
+			}
+			
 		}
 	}	
 
@@ -255,9 +264,12 @@ Forestogramme <- function(size,
 	#-----------------------------------------------------------------------------
 	# DRAW BOTTOM PLAIN AND GRID.
 	#-----------------------------------------------------------------------------
-	DrawPlaneAndGrid(size, line_width = base_contour_width) # Draw square base and grid.
-	DrawSquaresOnPlane(size, 0, cm.colors(color_range + 1, alpha = 0.5), plane_colors)		
-	# DrawSquaresOnPlane(size, 0, terrain.colors(color_range + 1, alpha = 0.5), plane_colors)
+	if(draw_only_from_cut == FALSE)
+	{
+		DrawPlaneAndGrid(size, line_width = base_contour_width) # Draw square base and grid.
+		DrawSquaresOnPlane(size, 0, cm.colors(color_range + 1, alpha = 0.5), plane_colors)		
+	}
+	
 
 	# 
 
@@ -334,19 +346,44 @@ Forestogramme <- function(size,
 			#-----------------------------------------------------------------------------
 			if(draw3D == TRUE)
 			{
-				# Draw row merge on 3D plot.
+
+				if(draw_only_from_cut == TRUE)
+				{
+					if(isHeightDraw == TRUE)
+					{
+						# Draw row merge on 3D plot.
+						DrawTwoRow(info_array, v1, v2, height_vector[i], 
+							array_size, col_names, color, alpha, lw_3d,
+							cut_bottom = scaled_cut_height)
+					}
+				} else {
+					# Draw row merge on 3D plot.
 				DrawTwoRow(info_array, v1, v2, height_vector[i], 
 							array_size, col_names, color, alpha, lw_3d)
+				}
+				
 			}
 
 			# Draw row merge on 2D plane.
 			if(draw_side_tree == TRUE)
 			{
-				MergeTwoRowOnPlaneView(info_plane_row, v1, v2, 
+				if(draw_only_from_cut == TRUE)
+				{
+					MergeTwoRowOnPlaneView(info_plane_row, v1, v2, 
+									   height_vector[i], 
+									   array_size, 
+									   line_width_2D = lw_2d,
+									   alpha = alpha_2d,
+									   z = scaled_cut_height)
+					
+				} else {
+					MergeTwoRowOnPlaneView(info_plane_row, v1, v2, 
 									   height_vector[i], 
 									   array_size, 
 									   line_width_2D = lw_2d,
 									   alpha = alpha_2d)
+				}
+				
 			}
 
 			#-----------------------------------------------------------------------------
@@ -385,19 +422,45 @@ Forestogramme <- function(size,
 
 			if(draw3D == TRUE)
 			{
-				MergeTwoColumn(info_array, v1, v2, 
+				if(draw_only_from_cut == TRUE)
+				{
+					if(isHeightDraw == TRUE)
+					{
+						MergeTwoColumn(info_array, v1, v2, 
+							   		   height_vector[i], 
+							   		   array_size,
+							   		   row_names, color, alpha, lw_3d,
+							   		   cut_bottom = scaled_cut_height);
+					}
+				} else {
+					MergeTwoColumn(info_array, v1, v2, 
 							   height_vector[i], 
 							   array_size,
 							   row_names, color, alpha, lw_3d)
+				}
+
+
+				
 			}
 
 			if(draw_side_tree == TRUE)
 			{
-				MergeTwoColumnOnPlaneView(info_plane_col, v1, v2, 
+				if(draw_only_from_cut == TRUE)
+				{
+					MergeTwoColumnOnPlaneView(info_plane_col, v1, v2, 
+							   			  height_vector[i], 
+							   			  array_size, 
+									   	  line_width_2D = lw_2d,
+									      alpha = alpha_2d,
+									   	  z = scaled_cut_height);
+				} else {
+					MergeTwoColumnOnPlaneView(info_plane_col, v1, v2, 
 							   			  height_vector[i], 
 							   			  array_size, 
 									   	  line_width_2D = lw_2d,
 									      alpha = alpha_2d)
+				}
+				
 			}
 
 
@@ -474,10 +537,16 @@ Forestogramme <- function(size,
 					if(draw_side_tree == TRUE)
 					{
 						# Draw plane line cup on row.
-						segments3d(c(-1.0 * ratio, 1.0), c(1.0 + height, 1.0 + height), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
+						zz = 0;
+
+						if(draw_only_from_cut == TRUE)
+						{
+							zz <- height;
+						}
+						segments3d(c(-1.0 * ratio, 1.0), c(1.0 + height, 1.0 + height), c(zz, zz), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
 		
 						# Draw plane line cup on row.
-						segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
+						segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(zz, zz), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
 					}
 
 					for(n in row_names)

@@ -71,32 +71,32 @@ DrawLegend <- function()
 	lines3d(2.0, 0, seq(0, 0.8, by=0.0001), col=colors, lwd=20)
 }
 
-MergeTwoRowOnPlaneView <- function(info_plane_row, v1, v2, height, size, color = rgb(0.0, 0.0, 0.0), alpha = 1.0, line_width_2D = 2)
+MergeTwoRowOnPlaneView <- function(info_plane_row, v1, v2, height, size, color = rgb(0.0, 0.0, 0.0), alpha = 1.0, line_width_2D = 2, z = 0)
 {
-	data = CreateRowPlaneViewDrawingVectors(info_plane_row, v1, v2, height);
+	data = CreateRowPlaneViewDrawingVectors(info_plane_row, v1, v2, height, z = z);
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width_2D, alpha=alpha)
 }
 
-DrawTwoRow <- function(info_array, v1, v2, height, size, col_names, color = rgb(0.0, 0.0, 0.0), alpha = 0.5, line_width = 4)
+DrawTwoRow <- function(info_array, v1, v2, height, size, col_names, color = rgb(0.0, 0.0, 0.0), alpha = 0.5, line_width = 4, cut_bottom = 0)
 {
-	data = CreateRowDrawingVectors(info_array, v1, v2, height, col_names)
+	data = CreateRowDrawingVectors(info_array, v1, v2, height, col_names, cut_bottom = cut_bottom)
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width, alpha=alpha)
 }
 
-MergeTwoColumnOnPlaneView <- function(info_plane_col, v1, v2, height, size, alpha = 1.0, line_width_2D = 2, color = rgb(0.0, 0.0, 0.0))
+MergeTwoColumnOnPlaneView <- function(info_plane_col, v1, v2, height, size, alpha = 1.0, line_width_2D = 2, color = rgb(0.0, 0.0, 0.0), z = 0)
 {
-	data = CreateColPlaneViewDrawingVectors(info_plane_col, v1, v2, height);
+	data = CreateColPlaneViewDrawingVectors(info_plane_col, v1, v2, height, z = z);
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width_2D, alpha=alpha)
 }
 
 
-MergeTwoColumn <- function(info_array, v1, v2, height, size, row_names, color = rgb(0.0, 0.0, 0.0), alpha = 0.5, line_width = 4)
+MergeTwoColumn <- function(info_array, v1, v2, height, size, row_names, color = rgb(0.0, 0.0, 0.0), alpha = 0.5, line_width = 4, cut_bottom = 0)
 {
-	data = CreateColDrawingVectors(info_array, v1, v2, height, row_names)
+	data = CreateColDrawingVectors(info_array, v1, v2, height, row_names, cut_bottom)
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width, alpha=alpha)
 }
 
-Draw2DAxes <- function(size, alpha = 1.0)
+Draw2DAxes <- function(size, alpha = 1.0, z = 0)
 {
 	data = matrix(NA, nrow = 3,  ncol=(20*2), byrow = TRUE)
 	ratio = size[1]/size[2]
@@ -105,10 +105,10 @@ Draw2DAxes <- function(size, alpha = 1.0)
 
 	index_i = 1
 
-	segments3d(c(-1.0 * ratio, -1.0 * ratio), c(1.0, 2.0), c(0, 0), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
-	segments3d(c(1.0, 1.0), c(1.0, 2.0), c(0, 0), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
-	segments3d(c(1.0, 2.0), c(1.0, 1.0), c(0, 0), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
-	segments3d(c(1.0, 2.0), c(-1.0, -1.0), c(0, 0), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
+	segments3d(c(-1.0 * ratio, -1.0 * ratio), c(1.0, 2.0), c(z, z), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
+	segments3d(c(1.0, 1.0), c(1.0, 2.0), c(z, z), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
+	segments3d(c(1.0, 2.0), c(1.0, 1.0), c(z, z), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
+	segments3d(c(1.0, 2.0), c(-1.0, -1.0), c(z, z), col=rgb(0.4, 0.4, 0.4), lwd=1, alpha=grid_alpha)
 
 	for( v in 1:10)
 	{
@@ -118,8 +118,8 @@ Draw2DAxes <- function(size, alpha = 1.0)
 		data[2, index_i+0] = 1.0 + 0.1 * v
 		data[2, index_i+1] = 1.0 + 0.1 * v
 
-		data[3, index_i+0] = 0.0
-		data[3, index_i+1] = 0.0
+		data[3, index_i+0] = z
+		data[3, index_i+1] = z
 		index_i <- index_i + 2
 		# ----------------------------------------------------------
 		data[1, index_i+0] = 1.0 + 0.1 * v
@@ -128,8 +128,8 @@ Draw2DAxes <- function(size, alpha = 1.0)
 		data[2, index_i+0] = 1.0
 		data[2, index_i+1] = 1.0 - 2.0
 
-		data[3, index_i+0] = 0.0
-		data[3, index_i+1] = 0.0
+		data[3, index_i+0] = z
+		data[3, index_i+1] = z
 		index_i <- index_i + 2
 	}
 

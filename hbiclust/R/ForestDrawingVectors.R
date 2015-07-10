@@ -133,7 +133,7 @@ DrawSquaresWithDimensionOfSquare <- function(size, height,
 	return (square)
 }
 
-CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height)
+CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height, z = 0)
 {
 	data = matrix(NA, nrow = 3,  ncol=6, byrow = TRUE)
 
@@ -146,8 +146,8 @@ CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height)
 	data[2, index] = 1 + info_plane_row[v1, 3]
 	data[2, index+1] = 1 + height
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -158,8 +158,8 @@ CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height)
 	data[2, index] = 1.0 + height
 	data[2, index+1] = 1.0 + height
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -170,8 +170,8 @@ CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height)
 	data[2, index] = 1 + info_plane_row[v2, 3]
 	data[2, index+1] = 1 + height
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -179,7 +179,7 @@ CreateRowPlaneViewDrawingVectors <- function(info_plane_row, v1, v2, height)
 }
 
 
-CreateRowDrawingVectors <- function(info_array, v1, v2, height, col_names)
+CreateRowDrawingVectors <- function(info_array, v1, v2, height, col_names, cut_bottom = 0)
 {
 	data = matrix(NA, nrow = 3,  ncol=length(col_names) * 6, byrow = TRUE)
 
@@ -196,6 +196,14 @@ CreateRowDrawingVectors <- function(info_array, v1, v2, height, col_names)
 
 		data[3, index] = info_array[v1, i, 3]
 		data[3, index+1] = height
+
+		if(cut_bottom != 0)
+		{
+			if(data[3, index] < cut_bottom)
+			{
+				data[3, index] = cut_bottom;
+			}
+		}
 
 		index <- index + 2
 
@@ -221,6 +229,14 @@ CreateRowDrawingVectors <- function(info_array, v1, v2, height, col_names)
 		data[3, index] = info_array[v2, i, 3]
 		data[3, index+1] = height
 
+		if(cut_bottom != 0)
+		{
+			if(data[3, index] < cut_bottom)
+			{
+				data[3, index] = cut_bottom;
+			}
+		}
+
 		index <- index + 2
 	}
 
@@ -229,7 +245,7 @@ CreateRowDrawingVectors <- function(info_array, v1, v2, height, col_names)
 
 
 
-CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height)
+CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height, z = 0)
 {
 	data = matrix(NA, nrow = 3,  ncol=6, byrow = TRUE)
 
@@ -242,8 +258,8 @@ CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height)
 	data[2, index] = info_plane_col[v1, 2]
 	data[2, index+1] = info_plane_col[v1, 2]
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -254,8 +270,8 @@ CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height)
 	data[2, index] = info_plane_col[v1, 2]
 	data[2, index+1] = info_plane_col[v2, 2]
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -266,8 +282,8 @@ CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height)
 	data[2, index] = info_plane_col[v2, 2]
 	data[2, index+1] = info_plane_col[v2, 2]
 
-	data[3, index] = 0
-	data[3, index+1] = 0
+	data[3, index] = z
+	data[3, index+1] = z
 
 	index <- index + 2
 
@@ -276,7 +292,7 @@ CreateColPlaneViewDrawingVectors <- function(info_plane_col, v1, v2, height)
 
 
 
-CreateColDrawingVectors <- function(info_array, v1, v2, height, row_names)
+CreateColDrawingVectors <- function(info_array, v1, v2, height, row_names, cut_bottom = 0)
 {
 	data = matrix(NA, nrow = 3,  ncol=length(row_names) * 6, byrow = TRUE)
 
@@ -293,6 +309,15 @@ CreateColDrawingVectors <- function(info_array, v1, v2, height, row_names)
 
 		data[3, index] = info_array[i, v1, 3]
 		data[3, index+1] = height
+
+		if(cut_bottom != 0)
+		{
+			if(data[3, index] < cut_bottom)
+			{
+				data[3, index] = cut_bottom;
+			}
+		}
+		
 
 		index <- index + 2
 
@@ -317,6 +342,14 @@ CreateColDrawingVectors <- function(info_array, v1, v2, height, row_names)
 
 		data[3, index] = info_array[i, v2, 3]
 		data[3, index+1] = height
+
+		if(cut_bottom != 0)
+		{
+			if(data[3, index] < cut_bottom)
+			{
+				data[3, index] = cut_bottom;
+			}
+		}
 
 		index <- index + 2
 	}
