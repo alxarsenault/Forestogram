@@ -8,7 +8,7 @@ CreatePlaneColors <- function(data, color_range = 10)
 	plane_colors <- plane_colors / data_max
 	plane_colors <- plane_colors * (color_range - 1) + 1
 
-	return (plane_colors)
+	return(plane_colors);
 }
 
 ##### COULD BE MADE IN C++ 
@@ -98,7 +98,15 @@ forestogram <- function(clust_data,
 						  line_width = 2,
 						  line_width_2D = 1,
 						  base_contour_width = 1,
-						  cut_base_contour_width = 1)
+						  cut_base_contour_width = 1,
+						  cut_base_alpha = 0.65,
+						  tree_top_color = c(1.0, 0.0, 0.0),
+						  tree_bottom_color = c(248.0 / 255.0, 239.0/255.0, 0.0),
+						  interpolate_tree_colors = TRUE,
+						  interpolate_tree_line_width = TRUE,
+						  interpolate_tree_line_alpha = TRUE,
+						  interpolate_tree_line_width_2D = TRUE,
+						  interpolate_tree_line_alpha_2D = TRUE)
 {
 	Forestogramme(clust_data$dim,
 				  clust_data$merge,
@@ -115,7 +123,15 @@ forestogram <- function(clust_data,
 				  line_width,
 				  line_width_2D,
 				  base_contour_width,
-				  cut_base_contour_width);
+				  cut_base_contour_width,
+				  cut_base_alpha,
+				  tree_top_color,
+				  tree_bottom_color,
+				  interpolate_tree_colors,
+				  interpolate_tree_line_width,
+				  interpolate_tree_line_alpha,
+				  interpolate_tree_line_width_2D,
+				  interpolate_tree_line_alpha_2D);
 }
 
 Forestogramme <- function(size, 
@@ -125,7 +141,6 @@ Forestogramme <- function(size,
 						  data = 0,
 						  row_permutation = 0, 
 						  col_permutation = 0,
-						  
 						  cut_height = 100000,
 						  draw_cut = TRUE,
 						  draw_side_tree = TRUE,
@@ -134,7 +149,15 @@ Forestogramme <- function(size,
 						  line_width = 4,
 						  line_width_2D = 4,
 						  base_contour_width = 2,
-						  cut_base_contour_width = 2)
+						  cut_base_contour_width = 2,
+						  cut_base_alpha = 0.65,
+						  tree_top_color = c(1.0, 0.0, 0.0),
+						  tree_bottom_color = c(248.0 / 255.0, 239.0/255.0, 0.0),
+						  interpolate_tree_colors = TRUE,
+						  interpolate_tree_line_width = TRUE,
+						  interpolate_tree_line_alpha = TRUE,
+						  interpolate_tree_line_width_2D = TRUE,
+						  interpolate_tree_line_alpha_2D = TRUE)
 {
     library(rgl);
 	# Start rgl engine.
@@ -145,6 +168,11 @@ Forestogramme <- function(size,
 	scaled_cut_height = cut_height / max(height_vector);
 	isHeightDraw = FALSE;
 
+
+
+	# clipplaneSlider(a=NULL, b=NULL, c=NULL, d=NULL,
+ #                    plane = 1)
+
 	#rgl.viewpoint(theta = 0, phi = -90)
 	#rgl.light( theta = 0, phi = 0, viewpoint.rel = TRUE, ambient = "#FF0000", 
     #       diffuse = "#FFFFFF", specular = "#FFFFFF", x = NULL, y = NULL, z = NULL)
@@ -154,13 +182,29 @@ Forestogramme <- function(size,
 	{
 		rgl.clear()
 		rgl.clear("lights")
-		rgl.light(theta = 30, phi = 100)
+		# rgl.light(theta = 30, phi = 100)
+		rgl.light(viewpoint.rel = FALSE)
+
+
+		view3d( theta = 0, phi = 0);
+		# light3d(viewpoint.rel = FALSE) 
+    # light3d(diffuse="gray10", specular="gray25")
+
+		# rgl.light(viewpoint.rel = FALSE, x = 0.0, y = 0.0, z = 1.0)
+		# rgl.light(viewpoint.rel = FALSE, diffuse=rgb(0.4, 0.4, 0.4), specular=rgb(0.6, 0.6, 0.6))
+
+
+    	# lightid <- spheres3d(x = 0.0, y=0.0, z = 0.0, emission="white", radius=4)
 	}
 	else
 	{
 		rgl.clear()
 		rgl.clear("lights")
-		rgl.light(theta = 0, phi = 50)
+		# rgl.light(theta = 0, phi = 50)
+
+		rgl.light(viewpoint.rel = FALSE)
+		# rgl.light(viewpoint.rel = FALSE)
+		# rgl.light(viewpoint.rel = FALSE, x = 0.0, y = 0.0, z = 1.0)
 		view3d( theta = 0, phi = 0)
 	}
 
@@ -197,8 +241,13 @@ Forestogramme <- function(size,
 	array_size = size
 	len = length(height_vector)
 
-	red_color = c(1.0, 0.0, 0.0)
-	yellow_color = c(248.0 / 255.0, 239.0/255.0, 0.0)
+	# red_color = c(0.0, 0.0, 1.0);
+	# yellow_color = c(248.0 / 255.0, 239.0/255.0, 0.0);
+
+	# top_color = c(1.0, 0.0, 0.0);
+	# bottom_color = c(248.0 / 255.0, 239.0/255.0, 0.0);
+
+	# lines_color = heat.colors(len, alpha = 1);
 
 	# red_color = c(0.0, 1.0, 0.0)
 	# yellow_color = c(0.0, 0.0, 1.0)
@@ -208,7 +257,9 @@ Forestogramme <- function(size,
 	#-----------------------------------------------------------------------------
 	DrawPlaneAndGrid(size, line_width = base_contour_width) # Draw square base and grid.
 	DrawSquaresOnPlane(size, 0, cm.colors(color_range + 1, alpha = 0.5), plane_colors)		
-		
+	# DrawSquaresOnPlane(size, 0, terrain.colors(color_range + 1, alpha = 0.5), plane_colors)
+
+	# 
 
 	# Create tree (All merges).
 	for(i in 1:len)
@@ -216,13 +267,60 @@ Forestogramme <- function(size,
 		s1 = toString(merge_matrix[i, 1])
 		s2 = toString(merge_matrix[i, 2])
 
+		# print(height_vector[i])
+		color = c();
+
 		# Interpolate color.
-		color = rgb(yellow_color[1]+height_vector[i]*(red_color[1] - yellow_color[1]), 
-					yellow_color[2]+height_vector[i]*(red_color[2] - yellow_color[2]),
-					0.0)
+		if(interpolate_tree_colors == TRUE)
+		{
+			h = height_vector[i];
+			color = rgb(tree_bottom_color[1] + h * (tree_top_color[1] - tree_bottom_color[1]), 
+					tree_bottom_color[2] + h * (tree_top_color[2] - tree_bottom_color[2]),
+					tree_bottom_color[3] + h * (tree_top_color[3] - tree_bottom_color[3]));
+		} else {
+
+			color_index_ratio = (i-1) / (len-1);
+			color = rgb(tree_bottom_color[1] + color_index_ratio * (tree_top_color[1] - tree_bottom_color[1]), 
+					tree_bottom_color[2] + color_index_ratio * (tree_top_color[2] - tree_bottom_color[2]),
+					tree_bottom_color[3] + color_index_ratio * (tree_top_color[3] - tree_bottom_color[3]));
+		}
 
 		# Interpolate transparence.
-		alpha = 0.5 + 0.5 * i / len
+		# alpha = 0.5 + 0.5 * i / len;
+		alpha = 1.0;
+
+		if(interpolate_tree_line_alpha == TRUE)
+		{
+			alpha <- 0.5 + 0.5 * i / len;
+		}
+		
+		lw_3d = line_width;
+
+		if(interpolate_tree_line_width == TRUE)
+		{
+			lw_3d <- (i / len) * line_width;
+		}
+
+		alpha_2d = 1.0;
+
+		if(interpolate_tree_line_alpha_2D == TRUE)
+		{
+			alpha_2d <- 0.5 + 0.5 * i / len;
+		}
+
+		lw_2d = line_width_2D;
+
+		if(interpolate_tree_line_width_2D == TRUE)
+		{
+			lw_2d <- (i / len) * line_width_2D;
+		}
+		
+		
+		
+		
+		# color = lines_color[len - i + 1];
+
+		
 		
 		# Row.
 		if(rowcol_vector[i] == 0)
@@ -238,7 +336,7 @@ Forestogramme <- function(size,
 			{
 				# Draw row merge on 3D plot.
 				DrawTwoRow(info_array, v1, v2, height_vector[i], 
-							array_size, col_names, color, alpha, line_width)
+							array_size, col_names, color, alpha, lw_3d)
 			}
 
 			# Draw row merge on 2D plane.
@@ -246,7 +344,9 @@ Forestogramme <- function(size,
 			{
 				MergeTwoRowOnPlaneView(info_plane_row, v1, v2, 
 									   height_vector[i], 
-									   array_size, line_width_2D = line_width_2D)
+									   array_size, 
+									   line_width_2D = lw_2d,
+									   alpha = alpha_2d)
 			}
 
 			#-----------------------------------------------------------------------------
@@ -288,14 +388,16 @@ Forestogramme <- function(size,
 				MergeTwoColumn(info_array, v1, v2, 
 							   height_vector[i], 
 							   array_size,
-							   row_names, color, alpha, line_width)
+							   row_names, color, alpha, lw_3d)
 			}
 
 			if(draw_side_tree == TRUE)
 			{
 				MergeTwoColumnOnPlaneView(info_plane_col, v1, v2, 
 							   			  height_vector[i], 
-							   			  array_size, line_width_2D)
+							   			  array_size, 
+									   	  line_width_2D = lw_2d,
+									      alpha = alpha_2d)
 			}
 
 
@@ -378,23 +480,19 @@ Forestogramme <- function(size,
 						segments3d(c(1.0 + height, 1.0 + height), c(-1.0, 1.0), c(0, 0), col=rgb(1.0, 0, 0), lwd=2, alpha=0.5)
 					}
 
-					#if(draw3D == TRUE)
+					for(n in row_names)
 					{
-						for(n in row_names)
+						for(c in col_names)
 						{
-							for(c in col_names)
-							{
-								square = DrawSquaresWithDimensionOfSquare(size, height, 
-																  		  info_array[n, c, 6],
-																  		  info_array[n, c, 7],
-																  		  info_array[n, c, 8],
-																  		  info_array[n, c, 9],
-																  		  line_width = cut_base_contour_width)
+							square = DrawSquaresWithDimensionOfSquare(size, height, 
+															  		  info_array[n, c, 6],
+															  		  info_array[n, c, 7],
+															  		  info_array[n, c, 8],
+															  		  info_array[n, c, 9],
+															  		  line_width = cut_base_contour_width)
 
-								shade3d( qmesh3d(square,indices), alpha=0.6, col=colors[color_index])
-
-								color_index <- color_index + 1;
-							}
+							shade3d(qmesh3d(square,indices), alpha=cut_base_alpha, col=colors[color_index]);
+							color_index <- color_index + 1;
 						}
 					}
 				}

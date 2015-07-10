@@ -26,7 +26,7 @@ dimnames(data) <- list(row_names, col_names)
 
 v <- hbiclust(data);
 
-forestogram(v, cut_height = 11.0);
+forestogram(v, cut_height = 11.0, interpolate_tree_colors = FALSE, cut_base_contour_width = 2);
 # hbiclust.plot(v, cut_height = 11);
 
 # d <- dist(t(gaelle), method = "euclidean")

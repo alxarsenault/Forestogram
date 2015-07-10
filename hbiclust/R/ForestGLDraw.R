@@ -83,10 +83,10 @@ DrawTwoRow <- function(info_array, v1, v2, height, size, col_names, color = rgb(
 	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width, alpha=alpha)
 }
 
-MergeTwoColumnOnPlaneView <- function(info_plane_col, v1, v2, height, size, line_width_2D = 2)
+MergeTwoColumnOnPlaneView <- function(info_plane_col, v1, v2, height, size, alpha = 1.0, line_width_2D = 2, color = rgb(0.0, 0.0, 0.0))
 {
-	data = CreateColPlaneViewDrawingVectors(info_plane_col, v1, v2, height)
-	segments3d(data[1, ], data[2, ], data[3, ], col=rgb(0,0,0), lwd=line_width_2D, alpha=1.0)
+	data = CreateColPlaneViewDrawingVectors(info_plane_col, v1, v2, height);
+	segments3d(data[1, ], data[2, ], data[3, ], col=color, lwd=line_width_2D, alpha=alpha)
 }
 
 
