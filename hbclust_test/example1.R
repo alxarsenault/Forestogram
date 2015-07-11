@@ -29,7 +29,7 @@ v <- hbiclust(data);
 forestogram(v, cut_height = 11.0, 
 			line_width = 3.0, 
 			interpolate_tree_colors = FALSE, 
-			cut_base_contour_width = 2, 
+			# cut_base_contour_width = 2, 
 			cut_base_alpha = 0.4,
 			draw_only_from_cut = TRUE);
 # hbiclust.plot(v, cut_height = 11);

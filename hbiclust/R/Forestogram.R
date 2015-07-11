@@ -570,8 +570,6 @@ Forestogramme <- function(size,
 
 		#snapshot3d("Test.png")
 	}
-
-
 }
 
 
