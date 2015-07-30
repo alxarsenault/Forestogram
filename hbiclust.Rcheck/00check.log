@@ -1,0 +1,27 @@
+* using log directory ‘/Users/alexarse/Project/Forestogram/hbiclust.Rcheck’
+* using R version 3.1.1 (2014-07-10)
+* using platform: x86_64-apple-darwin13.1.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘hbiclust/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘hbiclust’ version ‘0.1’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... WARNING
+Subdirectory ‘hbiclust/src’ contains apparent object files/libraries
+  BiClust.o BiDendrogram.o CppEntryPoint.o RUtils.o hbiclust.so
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .DS_Store
+  R/.DS_Store
+  src/.DS_Store
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘hbiclust’ can be installed ... ERROR
+Installation failed.
+See ‘/Users/alexarse/Project/Forestogram/hbiclust.Rcheck/00install.out’ for details.

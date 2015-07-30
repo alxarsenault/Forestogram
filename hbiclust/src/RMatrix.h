@@ -21,10 +21,10 @@ namespace R
 
 		}
 
-		void PrintSize() const
-		{
-			R::Print("Matrix2D size :", _size.row, _size.col);
-		}
+//		void PrintSize() const
+//		{
+//			R::Print("Matrix2D size :", _size.row, _size.col);
+//		}
 
 		inline T& operator () (const unsigned int& row, const unsigned int& col)
 		{
@@ -134,7 +134,6 @@ namespace ax
             }
             
             
-            
             Vector()
             {
             }
@@ -159,18 +158,6 @@ namespace ax
                 _vec[1] = y;
                 _vec[2] = z;
             }
-            
-//            Vector<T>& operator = (const Vector<T>& vec)
-//            {
-//                Vector<T>& answer = _vec;
-//                
-//                for(int i = 0; i < _vec.size(); i++)
-//                {
-//                    answer._vec[i] += value;
-//                }
-//                
-//                return answer;
-//            }
             
             T& operator [] (const int& index)
             {
@@ -290,7 +277,7 @@ namespace ax
             
             T Dist(const Vector<T>& pt) const
             {
-                assert(_vec.size() == pt.size());
+                // assert(_vec.size() == pt.size());
                 
                 double dist = 0.0;
                 

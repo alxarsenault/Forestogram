@@ -7,16 +7,16 @@
 namespace R
 {
 	// Since variadic templates are recursive, must have a base case.
-    void Print();
-    
-    template <typename T, typename ...P>
-    void Print(T t, P ...p)
-    {
-        std::cout << t << ' ';
-        {
-            Print(p...);
-        }
-    }
+//    void Print();
+//    
+//    template <typename T, typename ...P>
+//    void Print(T t, P ...p)
+//    {
+//        std::cout << t << ' ';
+//        {
+//            Print(p...);
+//        }
+//    }
 
 	template<typename T>
 	struct Size2D_T

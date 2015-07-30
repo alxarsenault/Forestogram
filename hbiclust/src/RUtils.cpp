@@ -2,10 +2,10 @@
 
 namespace R
 {
-	void Print()
-	{
-		std::cout << std::endl;
-	}
+//	void Print()
+//	{
+//		std::cout << std::endl;
+//	}
     
     R::ColorVector GetHeatColors(const int& n)
     {

@@ -24,7 +24,6 @@ namespace ax
         int n_row_clust, n_col_clust;
         std::vector<int> index_list;
         int name;
-        //std::string name;
     };
 }
 

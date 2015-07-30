@@ -519,7 +519,7 @@ Forestogramme <- function(size,
 		# DRAW CUT PLANE.
 		if(draw_cut == TRUE)
 		{
-			if(height_vector[i] >= scaled_cut_height)
+			if(height_vector[i] > scaled_cut_height)
 			{
 				if(isHeightDraw == FALSE)
 				{

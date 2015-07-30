@@ -1,9 +1,9 @@
 Package: hbiclust
 Type: Package
-Title: Calculating KMeans on gpu with CUDA cores.
+Title: Hierarchical biclustering
 Version: 0.1
 Date: 2015-06-18
 Author: Alexandre Arsenault
 Maintainer: Alexandre Arsenault <alexandre.arsenault@polymtl.ca>
-Description: Calculating KMeans on gpu with CUDA cores. User needs a NVIDIA graphic card supporting CUDA and have CUDA 7.0 library installed.
+Description: Plot a 2D or 3D hierarchical biclustering with respectively, hbiclust.plot and forestogram.
 License: GPL

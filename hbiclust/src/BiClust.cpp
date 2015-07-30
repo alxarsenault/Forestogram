@@ -180,16 +180,16 @@ void BiClust::mergeTwoCluster(ClusterData& clusters,
     auto n1 = clusters.find(merge.first);
     auto n2 = clusters.find(merge.second);
     
-    if(n1 == clusters.end())
-    {
-        R::Print("Error");
-        exit(0);
-    }
-    if(n2 == clusters.end())
-    {
-        R::Print("Error");
-        exit(0);
-    }
+//    if(n1 == clusters.end())
+//    {
+//        R::Print("Error");
+//        exit(0);
+//    }
+//    if(n2 == clusters.end())
+//    {
+//        R::Print("Error");
+//        exit(0);
+//    }
 
     
     ax::Cluster& c1 = n1->second;
@@ -241,7 +241,7 @@ void BiClust::process(const R::Matrix2D<double>& data)
     int i = 0;
     
     
-    R::Print("SIZE : ", clusters.size());
+//    R::Print("SIZE : ", clusters.size());
     //--------------------------------------------------------------------------
     while(clusters.size() > 1)
     {
@@ -263,10 +263,10 @@ void BiClust::process(const R::Matrix2D<double>& data)
     
     //--------------------------------------------------------------------------
 
-    for(auto& n : mergeMatrix)
-    {
-        R::Print(n.first, n.second);
-    }
+//    for(auto& n : mergeMatrix)
+//    {
+//        R::Print(n.first, n.second);
+//    }
     
     
     
